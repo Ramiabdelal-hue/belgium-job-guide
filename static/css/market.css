@@ -1,0 +1,261 @@
+:root {
+    --bg-black: #0b0e14;
+    --card-dark: #161a21;
+    --accent-blue: #00a3ff;
+    --text-white: #ffffff;
+    --text-gray: #9ca3af;
+    --border-glass: rgba(255, 255, 255, 0.08);
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--text-white);
+    font-family: 'Poppins', sans-serif;
+    margin: 0; padding: 40px ;
+    hr:10%
+}
+
+/* شريط البحث العلوي */
+.header-wrapper { max-width: 1300px; margin: 0 auto 30px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+
+.search-group {
+    background: rgba(15, 23, 42, 0.7);
+    border: 2px solid #00a3ff; /* لون أزرق نيون */
+    border-radius: 50px;
+    display: flex;
+    flex: 1;
+    padding: 5px 25px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 20px rgba(0, 163, 255, 0.3); /* توهج */
+}
+
+.search-item { flex: 1; display: flex; align-items: center; gap: 10px; }
+.search-item input {
+    background: transparent; border: none; color: white;
+    padding: 12px; width: 100%; outline: none;
+}
+.divider { width: 1px; background: var(--border-glass); margin: 10px 15px; }
+
+/* التخطيط (كروت + خريطة) */
+.main-layout {
+    display: grid; grid-template-columns: 1fr 420px;
+    gap: 30px; max-width: 1300px; margin: 0 auto;
+}
+
+.section-title { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--text-gray); }
+
+.container {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+}
+
+/* تصميم الكارت الجديد */
+.store-card {
+    background: var(--card-dark);
+    border-radius: 16px; overflow: hidden;
+    text-decoration: none; color: inherit;
+    border: 1px solid var(--border-glass);
+    transition: 0.3s;
+    height: 100%; /* لضمان عدم تقلص الكارت */
+    display: flex; /* أو النوع الذي تستخدمه */
+}
+
+.card-body {
+    flex-grow: 1; /* تجعل النصوص تأخذ مساحتها بالكامل ولا تختفي */
+}
+
+.store-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+
+.card-image { position: relative; height: 170px; }
+.store-img { width: 100%; height: 100%; object-fit: cover; }
+.store-img.placeholder { display: flex; align-items: center; justify-content: center; font-size: 40px; background: #222; }
+
+.badge {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--accent-blue); padding: 4px 10px;
+    border-radius: 6px; font-size: 11px; font-weight: bold;
+}
+
+.card-body { padding: 15px; }
+.card-body h3 { margin: 0 0 5px; font-size: 17px; }
+.stars { color: #fbbf24; font-size: 14px; }
+.store-desc {
+    font-size: 13px; color: var(--text-gray);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; margin: 10px 0;
+}
+
+.views-badge {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--accent-blue); margin-top: 15px;
+}
+
+/* الخريطة */
+.map-sidebar {
+    background: var(--card-dark); border-radius: 16px;
+    height: 600px; position: sticky; top: 20px;
+    border: 1px solid var(--border-glass); overflow: hidden;
+}
+#map { width: 100%; height: 100%; filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+
+/* الترقيم */
+.pagination { margin-top: 30px; display: flex; gap: 15px; color: var(--text-gray); cursor: pointer; }
+.pagination .active { color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue); }
+
+
+/* تضخيم حاوية البحث */
+.search-group-container {
+    flex: 1;
+    max-width: 900px; /* زيادة العرض ليكون لافتاً */
+    margin-right: 20px;
+}
+
+.search-group {
+    background: rgba(15, 23, 42, 0.8); /* لون داكن عميق */
+    border: 2px solid var(--accent-color); /* إطار بلون النيون الأزرق */
+    border-radius: 50px; /* حواف دائرية كاملة كما في الصورة */
+    display: flex;
+    align-items: center;
+    padding: 8px 10px 8px 25px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 25px rgba(0, 163, 255, 0.3); /* توهج خارجي لافت */
+    transition: all 0.3s ease;
+}
+
+.search-group:focus-within {
+    box-shadow: 0 0 35px rgba(0, 163, 255, 0.5); /* زيادة التوهج عند الكتابة */
+    transform: scale(1.01);
+}
+
+.search-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-icon {
+    font-size: 18px;
+    filter: drop-shadow(0 0 5px var(--accent-color)); /* أيقونات مضيئة */
+}
+
+.search-item input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    width: 100%;
+    outline: none;
+    font-weight: 500;
+}
+
+.search-item input::placeholder {
+    color: #64748b;
+}
+
+/* زر البحث الداخلي اللامع */
+.search-main-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 163, 255, 0.4);
+    transition: 0.3s;
+}
+
+.search-main-btn:hover {
+    background: #0082cc;
+    transform: translateX(-3px); /* حركة بسيطة للتفاعل */
+}
+
+.divider {
+    width: 2px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 20px;
+}
+
+
+.langs {
+    display: flex;
+    gap: 8px; /* مسافة بين الأزرار */
+}
+
+/* أزرار اللغات */
+.lang-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.lang-btn.active {
+    background: #00a3ff;
+    box-shadow: 0 0 15px rgba(0, 163, 255, 0.5);
+}
+
+.lang-btn:hover {
+    background: rgba(0, 163, 255, 0.2);
+}
+
+.home-btn {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* ===============================
+   📱 تصميم الهاتف (Mobile)
+   =============================== */
+@media (max-width: 768px) {
+
+    /* إخفاء أزرار اللغات */
+    .langs {
+        display: none;
+    }
+
+    /* إخفاء زر البحث الكبير */
+    .search-main-btn {
+        display: none;
+    }
+
+    /* إخفاء الخريطة الجانبية */
+    .map-sidebar {
+        display: none;
+    }
+
+    /* جعل البحث يأخذ العرض كامل */
+    .search-group-container {
+        max-width: 100%;
+        margin-right: 0;
+    }
+
+    .search-group {
+        padding: 10px 15px;
+        border-radius: 20px;
+    }
+
+    /* تحويل التخطيط إلى عمود واحد */
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    /* تقليل المسافات */
+    body {
+        padding: 15px;
+    }
+
+    /* تصغير الكروت */
+    .store-card {
+        border-radius: 12px;
+    }
+
+    .card-image {
+        height: 130px;
+    }
+}

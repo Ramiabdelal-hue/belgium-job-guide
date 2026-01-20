@@ -1,0 +1,86 @@
+ :root {
+            --primary: #4BA000;
+            --bg-dark: #0b1120;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', 'Cairo', sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 20%, rgba(75,160,0,0.12) 0%, transparent 40%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+
+        }
+
+        /* Topbar & Nav */
+        .topbar { display: flex; justify-content: space-between; padding: 10px 5%; background: rgba(255,255,255,0.05); font-size: 80%; border-bottom: 1px solid var(--glass-border); }
+        .langs { white-space: nowrap; }
+        .langs span { cursor: pointer; margin: 0 5px; font-weight: bold; transition: 0.3s; padding: 2px 8px; border-radius: 5px; }
+        .langs span.active { background: var(--primary); color: white; }
+
+        .navbar { 
+            margin: 15px 15px; padding: 12px 25px; 
+            background: var(--glass); backdrop-filter: blur(15px); 
+            border-radius: 15px; border: 1px solid var(--glass-border); 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 15px; z-index: 1000;
+            
+        }
+
+        .menu-btn { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+        .menu-btn div { width: 25px; height: 3px; background: white; border-radius: 2px; }
+
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-links a { color: #eee; text-decoration: none; padding: 8px 12px; border-radius: 10px; font-size: 80%; transition: 0.3s; cursor: pointer; }
+        .nav-links a:hover { background: rgba(255,255,255,0.1); }
+        .nav-links a.active-nav { background: var(--primary); color: white; }
+
+        #hero-cta {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 20px;
+        
+        }
+        #hero-cta:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(75, 160, 0, 0.3); }
+
+        @media (max-width: 992px) {
+            .menu-btn { display: flex; }
+            .nav-links { display: none; width: 100%; flex-direction: column; position: absolute; top: 60px; left: 0; background: #0b1120; padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); }
+            .nav-links.show { display: flex; }
+            .navbar { flex-wrap: wrap; }
+            .topbar { font-size: 9px; }
+        }
+
+        /* Sections */
+        .content-section { padding: 40px 5%; display: none; animation: fadeIn 0.5s ease forwards; }
+        .active-section { display: block !important; }
+
+        /* Hero */
+        .hero { text-align:center; padding: 30px 10px; background: var(--glass); border-radius:30px; border:2px solid var(--glass-border); max-width:750px; margin: 20px auto; font-size: 12px; }
+
+        /* Grid & Cards */
+        .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .market-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 5px 5px; border-radius: 25px; text-align: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; height: 100%; }
+        .market-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(255,255,255,0.12); }
+        .card-icon { font-size: 50px; margin-bottom: 15px; display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .ticker { position: fixed; bottom: 0; width: 100%; background: #000; padding: 8px 0; font-size: 15px; z-index: 100; border-top: 1px solid var(--glass-border); }
+
+        /* Corner Logo */
+        .corner-logo { position: fixed; bottom: 2px; left: 25px; z-index: 999; transition: 0.3s; }
+        body[dir="rtl"] .corner-logo { left: auto; right: 25px; display;flex; }
+        .corner-logo img { width: 200px; height: auto; object-fit: contain; display;flex; }

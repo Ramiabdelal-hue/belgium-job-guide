@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="title">البحث عن عمل في بلجيكا 🇧🇪</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/css/werk.css">
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <a href="javascript:history.back()" class="nav-btn" data-i18n="back">🔙 عودة</a>
+    <a href="{{ url_for('index') }}" class="nav-btn" data-i18n="home">🏠 الرئيسية</a>
+
+  </div>
+  <div>
+    <button class="lang-btn" onclick="changeLanguage('nl',this)">NL</button>
+    <button class="lang-btn active" onclick="changeLanguage('ar',this)">AR</button>
+    <button class="lang-btn" onclick="changeLanguage('fr',this)">FR</button>
+  </div>
+</div>
+
+<div class="container">
+<h1 data-i18n="title">البحث عن عمل في بلجيكا 🇧🇪</h1>
+
+<div class="note">
+<strong data-i18n="note_title">تنويه:</strong>
+<span data-i18n="note_text">هذه الصفحة بمثابة دليل عام للبحث عن عمل في بلجيكا، وليست جهة رسمية.</span>
+</div>
+
+<div class="card">
+<h2 data-i18n="step1_title">الخطوة 1: التحضير للبحث عن عمل</h2>
+<ul data-i18n="step1_list">
+<li>إعداد سيرة ذاتية (CV) متوافقة مع المعايير البلجيكية.</li>
+<li>كتابة خطاب تقديم (Cover Letter) مخصص لكل وظيفة.</li>
+<li>تحديد المجالات التي تريد العمل بها (IT، إدارة، خدمات، صناعة، إلخ).</li>
+<li>تحضير الوثائق الرسمية مثل الإقامة وتصاريح العمل إذا كنت بحاجة لها.</li>
+</ul>
+</div>
+
+<div class="card">
+<h2 data-i18n="step2_title">الخطوة 2: البحث في مواقع الوظائف</h2>
+<ul data-i18n="step2_list">
+<li><a href="https://www.stepstone.be/" target="_blank">StepStone.be</a> – أكبر موقع للوظائف في بلجيكا.</li>
+<li><a href="https://www.jobat.be/" target="_blank">Jobat.be</a> – وظائف بلجيكية متنوعة.</li>
+<li><a href="https://www.indeed.com/worldwide" target="_blank">Indeed</a> – محرك بحث عالمي للوظائف.</li>
+<li><a href="https://www.vdab.be/" target="_blank">VDAB</a> – الوكالة الفلمنكية للتوظيف.</li>
+<li><a href="https://forem.be/" target="_blank">FOREM</a> – الوكالة الوالونية للتوظيف.</li>
+<li><a href="https://www.eures.europa.eu/" target="_blank">EURES</a> – شبكة الوظائف الأوروبية.</li>
+<li><a href="https://www.monster.be/" target="_blank">Monster.be</a> – منصة بحث عن الوظائف في بلجيكا.</li>
+<li><a href="https://www.brusselsjobs.be/" target="_blank">BrusselsJobs.be</a> – وظائف متخصصة في بروكسل.</li>
+</ul>
+</div>
+
+<div class="card">
+<h2 data-i18n="step3_title">الخطوة 3: التسجيل في مكاتب التوظيف</h2>
+<ul data-i18n="step3_list">
+<li>تسجيل نفسك لدى مكاتب التوظيف المحلية للحصول على فرص عمل ودورات تدريبية.</li>
+<li>زيارة <a href="https://www.vdab.be/" target="_blank">VDAB</a> إذا كنت في فلاندرز، أو <a href="https://forem.be/" target="_blank">FOREM</a> في والونيا.</li>
+<li>تحديث ملفك الشخصي بشكل دوري للحصول على إخطارات الوظائف.</li>
+<li>الاستفادة من برامج التدريب المهني وتحسين اللغة.</li>
+</ul>
+</div>
+
+<div class="card">
+<h2 data-i18n="step4_title">الخطوة 4: نصائح للنجاح</h2>
+<ul data-i18n="step4_list">
+<li>تعلم اللغة الرسمية للمنطقة: الهولندية في فلاندرز، الفرنسية في والونيا، أو الإنجليزية في بروكسل.</li>
+<li>تحضير نفسك لمقابلات العمل، وفهم ثقافة الشركات البلجيكية.</li>
+<li>استغلال شبكات التواصل المهني مثل <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>.</li>
+<li>التقديم على وظائف مناسبة لمهاراتك ومؤهلاتك فقط.</li>
+<li>كن صبورًا وواصل متابعة الوظائف بشكل منتظم.</li>
+</ul>
+</div>
+
+</div>
+
+
+<script src="static/js/werk.js"></script>
+</body>
+</html>

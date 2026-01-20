@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="nl" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="meta-title">من نحن | Belgium Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="nav-links">
+            <a href="javascript:history.back()" class="nav-btn" id="btn-back">🔙 عودة</a>
+            <a href="/" class="nav-btn" id="btn-home">🏠 الرئيسية</a>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn" onclick="changeLang('nl')">NL</button>
+            <button class="lang-btn" onclick="changeLang('fr')">FR</button>
+            <button class="lang-btn active" onclick="changeLang('ar')">AR</button>
+        </div>
+    </div>
+
+    <section class="hero-section">
+        <h1 id="hero-title">مرحباً بكم في Belgium Guide</h1>
+        <p id="hero-sub">بوابتكم الموثوقة لكل ما يخص الحياة في بلجيكا</p>
+    </section>
+
+    <div class="container">
+        <div class="about-card">
+            <h2 id="card-title">ماذا يقدّم موقع Belgium Guide؟</h2>
+            <div class="gold-divider"></div>
+            <p id="card-desc">
+                هدفنا هو أن نكون المرجع الأول لك في بلجيكا. يوفر الموقع حالياً دليلاً شاملاً للخدمات التالية، ونعمل باستمرار على إضافة المزيد من الأقسام لتلبية كافة احتياجاتكم:
+            </p>
+
+            <div class="features" id="features-container">
+                </div>
+            <div class="contact-section" style="margin-top: 40px; text-align: center; border-top: 1px dashed #ddd; padding-top: 20px;">
+    <p id="contact-text" style="font-weight: 600; color: var(--black); margin-bottom: 15px;">
+        إذا كنت تريد أي استفسار اضغط هنا
+    </p>
+    <a href="/contact" class="contact-btn" id="btn-contact-page">
+        📩 Contact Us
+    </a>
+</div>
+
+            <div class="note" id="soon-note" style="margin-top: 30px; text-align: center; background-color: var(--accent); padding: 15px; border-radius: 10px; border-right: 4px solid var(--gold);">
+            </div>
+        </div>
+        
+        <footer id="footer-text">
+            &copy; 2026 Belgium Guide - جميع الحقوق محفوظة
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/about.js') }}"></script>
+</body>
+</html>

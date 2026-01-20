@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | Belgium Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --admin-black: #1a1a1a;
+            --admin-gold: #ffcc00;
+            --admin-red: #fd0000;
+            --admin-bg: #f4f7f6;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--admin-bg);
+            display: flex;
+        }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: var(--admin-black);
+            color: white;
+            position: fixed;
+            right: 0;
+            top: 0;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            color: var(--admin-gold);
+            font-size: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #ddd;
+            padding: 15px 25px;
+            text-decoration: none;
+            transition: 0.3s;
+            border-right: 4px solid transparent;
+        }
+
+        .sidebar a:hover {
+            background: #333;
+            color: var(--admin-gold);
+            border-right-color: var(--admin-gold);
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            margin-right: 250px; /* نفس عرض السايدبار */
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* الشريط العلوي */
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-logout {
+            background: var(--admin-red);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        /* رسائل التنبيه (Flash Messages) */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Belgium Guide Admin</h2>
+        <a href="/admin/panel">📊 إحصائيات</a>
+        <a href="/admin/requests">🔔 طلبات الانضمام</a>
+        <a href="/admin/panel">🏬 إدارة المحلات</a>
+        <a href="/admin/change-password">🔑 تغيير كلمة المرور</a>
+        <a href="/" target="_blank">🌐 عرض الموقع</a>
+    </div>
+
+    <div class="main-content">
+        <div class="top-nav">
+            <div>أهلاً بك، <strong>مدير الموقع</strong></div>
+            <a href="/admin/logout" class="btn-logout">تسجيل الخروج</a>
+        </div>
+
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="flash-messages">
+                  {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+</body>
+</html>
