@@ -17,25 +17,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ---------------- CONFIGURATION ----------------
 app = Flask(__name__)
 
-# استخدم مفتاح عشوائي إذا لم يتوفر مفتاح في البيئة
-app.secret_key = os.getenv("SECRET_KEY", "default_secret_key_for_dev_123")
+# مفتاح سري آمن
+app.secret_key = os.getenv("SECRET_KEY", "secure_random_key_998877")
 
-# --- التعديل الموثوق للربط مع Render PostgreSQL ---
-# الرابط الذي زودتني به
-LOCAL_DATABASE_URL= "postgresql://belgiumguidedb_0xlb_user:GAkBiQIkcdGY202QJURFHiYnUIqBv2WW@dpg-d5nae8re5dus73f1pgl0-a.virginia-postgres.render.com/belgiumguidedb_0xlb"
+# --- الربط الذكي مع PostgreSQL ---
+LOCAL_DATABASE_URL = "postgresql://belgiumguidedb_0xlb_user:GAkBiQIkcdGY202QJURFHiYnUIqBv2WW@dpg-d5nae8re5dus73f1pgl0-a.virginia-postgres.render.com/belgiumguidedb_0xlb"
 
-# نتحقق أولاً إذا كان Render يوفر الرابط تلقائياً في البيئة، وإذا لم يوجد نستخدم الرابط اليدوي
-DATABASE_URL = os.environ.get("DATABASE_URL", LOCAL_DATABASE_URL)
+# ريندر يستخدم DATABASE_URL، وإذا لم يوجد يستخدم الرابط الخارجي
+database_uri = os.environ.get("DATABASE_URL", LOCAL_DATABASE_URL)
 
-if DATABASE_URL.startswith("postgres://"):
-    # إصلاح مشكلة السابقة لـ SQLAlchemy
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+if database_uri.startswith("postgres://"):
+    database_uri = database_uri.replace("postgres://", "postgresql://", 1)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', LOCAL_DATABASE_URL)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # -----------------------------------------------
 
-# الحماية والضغط
 csrf = CSRFProtect(app)
 Talisman(app, content_security_policy=None, force_https=False)
 app.config.update(
@@ -48,7 +45,6 @@ db = SQLAlchemy(app)
 Compress(app)
 cache = Cache(app, config={"CACHE_TYPE": "simple"})
 
-# مسار الرفع
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -390,10 +386,13 @@ def delete_store(store_id):
 # ---------------- INITIALIZATION ----------------
 with app.app_context():
     try:
+        # إنشاء الجداول في PostgreSQL
         db.create_all()
+        # التأكد من وجود مستخدم أدمن افتراضي في القاعدة الجديدة
         if not Admin.query.filter_by(username="admin").first():
             db.session.add(Admin(username="admin", password=generate_password_hash("admin123")))
             db.session.commit()
+            print("Admin user created successfully.")
     except Exception as e:
         print(f"Init Error: {e}")
 
