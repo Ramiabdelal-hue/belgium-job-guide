@@ -7,3 +7,4 @@ flask-caching
 flask-wtf
 flask-talisman
 werkzeug
+gunicorn
