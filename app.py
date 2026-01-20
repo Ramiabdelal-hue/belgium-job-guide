@@ -31,7 +31,7 @@ if DATABASE_URL.startswith("postgres://"):
     # إصلاح مشكلة السابقة لـ SQLAlchemy
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', EXTERNAL_URL)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # -----------------------------------------------
 
