@@ -22,16 +22,16 @@ app.secret_key = os.getenv("SECRET_KEY", "default_secret_key_for_dev_123")
 
 # --- التعديل الموثوق للربط مع Render PostgreSQL ---
 # الرابط الذي زودتني به
-EXTERNAL_URL = "postgresql://belgiumguidedb_0xlb_user:GAkBiQIkcdGY202QJURFHiYnUIqBv2WW@dpg-d5nae8re5dus73f1pgl0-a.frankfurt-postgres.render.com/belgiumguidedb_0xlb"
+LOCAL_DATABASE_URL= "postgresql://belgiumguidedb_0xlb_user:GAkBiQIkcdGY202QJURFHiYnUIqBv2WW@dpg-d5nae8re5dus73f1pgl0-a.virginia-postgres.render.com/belgiumguidedb_0xlb"
 
 # نتحقق أولاً إذا كان Render يوفر الرابط تلقائياً في البيئة، وإذا لم يوجد نستخدم الرابط اليدوي
-DATABASE_URL = os.environ.get("DATABASE_URL", EXTERNAL_URL)
+DATABASE_URL = os.environ.get("DATABASE_URL", LOCAL_DATABASE_URL)
 
 if DATABASE_URL.startswith("postgres://"):
     # إصلاح مشكلة السابقة لـ SQLAlchemy
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', EXTERNAL_URL)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', LOCAL_DATABASE_URL)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # -----------------------------------------------
 
