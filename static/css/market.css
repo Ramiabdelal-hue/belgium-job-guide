@@ -39,21 +39,16 @@ body {
 
 /* التخطيط (كروت + خريطة) */
 .main-layout {
-display: grid; 
-    grid-template-columns: 1fr 420px;
-    gap: 30px; 
-    max-width: 1400px; /* تم زيادتها من 1300 لتناسب 3 كروت بجانب الخريطة */
-    margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 420px;
+    gap: 30px; max-width: 1300px; margin: 0 auto;
 }
 
 .section-title { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--text-gray); }
 
 .container {
-    display: grid; 
-    /* هذا السطر يجبر المتصفح على عرض 3 أعمدة متساوية دائماً */
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 20px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
 }
+
 /* تصميم الكارت الجديد */
 .store-card {
     background: var(--card-dark);
@@ -214,7 +209,6 @@ display: grid;
     line-height: 1;
 }
 
-
 /* ===============================
    📱 تصميم الهاتف (Mobile)
    =============================== */
@@ -265,14 +259,3 @@ display: grid;
         height: 130px;
     }
 }
-
-/* لضمان التناسق على الشاشات المتوسطة (مثل الأجهزة اللوحية) */
-@media (max-width: 1024px) {
-    .container {
-        grid-template-columns: repeat(2, 1fr); /* كرتين فقط عند ضيق الشاشة قليلاً */
-    }
-}
-
-
-
-
