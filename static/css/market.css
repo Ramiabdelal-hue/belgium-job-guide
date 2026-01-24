@@ -263,11 +263,7 @@ body {
     }
 }
 
-/* لضمان التناسق على الشاشات المتوسطة (مثل الأجهزة اللوحية) */
-@media (max-width: auto) {
-    .container {
-        grid-template-columns: repeat(2, 1fr); /* كرتين فقط عند ضيق الشاشة قليلاً */
-    }
-}
+
+
 
 
