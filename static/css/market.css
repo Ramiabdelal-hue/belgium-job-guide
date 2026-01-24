@@ -262,3 +262,11 @@ body {
         height: 130px;
     }
 }
+
+/* لضمان التناسق على الشاشات المتوسطة (مثل الأجهزة اللوحية) */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: repeat(2, 1fr); /* كرتين فقط عند ضيق الشاشة قليلاً */
+    }
+}
+
