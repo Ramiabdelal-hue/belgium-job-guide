@@ -46,9 +46,11 @@ body {
 .section-title { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--text-gray); }
 
 .container {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+    display: grid; 
+    /* هذا السطر يجبر المتصفح على عرض 3 أعمدة متساوية دائماً */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px;
 }
-
 /* تصميم الكارت الجديد */
 .store-card {
     background: var(--card-dark);
@@ -208,6 +210,7 @@ body {
     font-size: 1.2rem;
     line-height: 1;
 }
+
 
 /* ===============================
    📱 تصميم الهاتف (Mobile)
