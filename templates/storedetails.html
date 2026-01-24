@@ -7,6 +7,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/storedetails.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* التنسيق الخاص بتكبير الصور */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -89,14 +125,7 @@
             <div class="info-column">
                 <section>
                     <div class="section-title">📞 Contact</div>
-                    {% if store.website %}
-                    <p style="margin-bottom: 10px;">
-                        <strong>Website:</strong> 
-                        <a href="{{ store.website }}" target="_blank" style="color: #d4af37; text-decoration: none;">
-                            {{ store.website.replace('https://', '').replace('http://', '') }}
-                        </a>
-                    </p>
-                    {% endif %}
+                 
                     
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
                         <strong style="font-size: 1.2rem;">{{ store.phone }}</strong>
@@ -104,15 +133,22 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="30">
                         </a>
                     </div>
-                    <p style="color: #666; font-size: 0.95rem; margin: 5px 0;">📍 {{ store.address }}</p>
+                    <p style="color: #666; font-size: 0.95rem; margin: 1px 0;">📍 {{ store.address }}</p>
                 </section>
-
+                
+   {% if store.website %}
+                    <p style="margin: 1px 0; ">
+                        <strong>Website :</strong> 
+                        <a href="{{ store.website }}" target="_blank" style="color: #d4af37; text-decoration: none;">
+                            {{ store.website.replace('https://', '').replace('http://', '') }}
+                        </a>
+                    </p>
+                    {% endif %}
                 <section style="margin-top: 20px;">
-              
                     <div class="gallery-grid">
                         {% if store.images %}
                             {% for img in store.images[:6] %}
-                            <img src="{{ url_for('static', filename='uploads/' + img.filename) }}" class="gallery-img" onclick="openLightbox(this.src)">
+                            <img src="{{ url_for('static', filename='uploads/' + img.filename) }}" class="gallery-img" style="cursor: zoom-in;" onclick="openLightbox(this.src)">
                             {% endfor %}
                         {% else %}
                             <p style="font-size: 0.8rem; color: #999;">Geen foto's beschikbaar</p>
@@ -125,12 +161,32 @@
     </div>
 </div>
 
-<script>
-    // تمرير البيانات للجافا سكريبت إذا كنت لا تزال تحتاجه
-    window.storeHoursData = {{ store.hours|tojson if store.hours else '{}' }};
-</script>
-</body>
- <script src="{{ url_for('static', filename='js/storedetail.js') }}" defer></script>
-</html>
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+</div>
 
-<!--<div class="qr-image-side"> <h3 class="Laat deze kaart aan de winkeleigenaar zien en ontvang 10% korting op alle artikelen.">Laat deze kaart aan de winkeleigenaar zien en ontvang 10% korting op alle artikelen.</h3>-->
+<script>
+    window.storeHoursData = {{ store.hours|tojson if store.hours else '{}' }};
+
+    function openLightbox(src) {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        lightboxImg.src = src;
+        lightbox.style.display = 'flex';
+        setTimeout(() => lightbox.classList.add('active'), 10);
+    }
+
+    function closeLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('active');
+        setTimeout(() => lightbox.style.display = 'none', 300);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape") closeLightbox();
+    });
+</script>
+<script src="{{ url_for('static', filename='js/storedetail.js') }}" defer></script>
+</body>
+</html>
