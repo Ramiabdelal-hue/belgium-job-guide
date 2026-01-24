@@ -1,82 +1,174 @@
- :root {
-            --primary: #4BA000;
-            --bg-dark: #0b1120;
-            --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-        }
+:root {
+    --primary: #4BA000;
+    --bg-dark: #0b1120;
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Poppins', 'Cairo', sans-serif;
-            background: var(--bg-dark);
-            color: #fff;
-            min-height: 100vh;
-            background-image: radial-gradient(circle at 10% 20%, rgba(75,160,0,0.12) 0%, transparent 40%);
-            background-attachment: fixed;
-            overflow-x: hidden;
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
 
-        }
+body {
+    font-family: 'Poppins', 'Cairo', sans-serif;
+    background: var(--bg-dark);
+    color: #fff;
+    min-height: 100vh;
+    background-image: radial-gradient(circle at 10% 20%, rgba(75,160,0,0.12) 0%, transparent 40%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
 
-        /* Topbar & Nav */
-        .topbar { display: flex; justify-content: space-between; padding: 10px 5%; background: rgba(255,255,255,0.05); font-size: 80%; border-bottom: 1px solid var(--glass-border); }
-        .langs { white-space: nowrap; }
-        .langs span { cursor: pointer; margin: 0 5px; font-weight: bold; transition: 0.3s; padding: 2px 8px; border-radius: 5px; }
-        .langs span.active { background: var(--primary); color: white; }
+/* --- Topbar & Nav --- */
+.topbar { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 10px 5%; 
+    background: rgba(255,255,255,0.05); 
+    font-size: 80%; 
+    border-bottom: 1px solid var(--glass-border); 
+}
 
-        .navbar { 
-            margin: 15px 15px; padding: 12px 25px; 
-            background: var(--glass); backdrop-filter: blur(15px); 
-            font-size : 18px;
-            border-radius: 15px; border: 1px solid var(--glass-border); 
-            display: flex; justify-content: space-between; align-items: center; 
-            position: sticky; top: 15px; z-index: 1000;
-            
-        }
+.langs { white-space: nowrap; }
+.langs span { cursor: pointer; margin: 0 5px; font-weight: bold; transition: 0.3s; padding: 2px 8px; border-radius: 5px; }
+.langs span.active { background: var(--primary); color: white; }
 
-        .menu-btn { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
-        .menu-btn div { width: 25px; height: 3px; background: white; border-radius: 2px; }
+.navbar { 
+    margin: 15px 15px; 
+    padding: 12px 25px; 
+    background: var(--glass); 
+    backdrop-filter: blur(15px); 
+    font-size : 18px;
+    border-radius: 15px; 
+    border: 1px solid var(--glass-border); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    position: sticky; 
+    top: 15px; 
+    z-index: 1000;
+}
 
-        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
-        .nav-links a { color: #eee; text-decoration: none; padding: 8px 12px; border-radius: 10px; font-size: 80%; transition: 0.3s; cursor: pointer; }
-        .nav-links a:hover { background: rgba(255,255,255,0.1); }
-        .nav-links a.active-nav { background: var(--primary); color: white; }
+.menu-btn { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+.menu-btn div { width: 25px; height: 3px; background: white; border-radius: 2px; }
 
-        #hero-cta {
-            display: inline-block;
-            padding: 15px 30px;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: 0.3s;
-            margin-top: 20px;
-        
-        }
-        #hero-cta:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(75, 160, 0, 0.3); }
+.nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-links a { color: #eee; text-decoration: none; padding: 8px 12px; border-radius: 10px; font-size: 80%; transition: 0.3s; cursor: pointer; }
+.nav-links a:hover { background: rgba(255,255,255,0.1); }
+.nav-links a.active-nav { background: var(--primary); color: white; }
 
-        @media (max-width: 992px) {
-            .menu-btn { display: flex; }
-            .nav-links { display: none; width: 100%; flex-direction: column; position: absolute; top: 60px; left: 0; background: #0b1120; padding: 15px; border-radius: 10px; border: 1px solid var(--glass-border); }
-            .nav-links.show { display: flex; }
-            .navbar { flex-wrap: wrap; font-size : 18px;}
-            .topbar { font-size: 13px; }
-        }
+/* --- Hero --- */
+.hero { 
+    text-align:center; 
+    padding: 40px 20px; 
+    background: var(--glass); 
+    border-radius:30px; 
+    border:2px solid var(--glass-border); 
+    max-width:750px; 
+    margin: 20px auto; 
+    font-size: 14px; 
+}
 
-        /* Sections */
-        .content-section { padding: 100px 5%; display: none; animation: fadeIn 0.5s ease forwards; }
-        .active-section { display: block !important; }
+#hero-cta {
+    display: inline-block;
+    padding: 15px 30px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+#hero-cta:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(75, 160, 0, 0.3); }
 
-        /* Hero */
-        .hero { text-align:center; padding: 30px 10px; background: var(--glass); border-radius:30px; border:2px solid var(--glass-border); max-width:750px; margin: 20px auto; font-size: 14px; }
+/* --- Sections --- */
+.content-section { padding: 80px 5%; display: none; animation: fadeIn 0.5s ease forwards; }
+.active-section { display: block !important; }
 
-        /* Grid & Cards */
-        .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)); gap: 15px; margin-top: 15px; }
-        .market-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 5px 5px; border-radius: 25px; text-align: center; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32,                 1.275); cursor: pointer; height: 100%; }
-        .market-card:hover { transform: translateY(-10px); border-color: var(--primary); background: rgba(255,255,255,0.12); }
-        .card-icon { font-size: 50px; margin-bottom: 15px; display: block; }
+/* --- Grid & Cards (إصلاح مشكلة خروج النص) --- */
+.market-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    gap: 20px; 
+    margin-top: 25px; 
+}
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.market-card { 
+    background: var(--glass); 
+    border: 1px solid var(--glass-border); 
+    padding: 30px 20px; 
+    border-radius: 25px; 
+    text-align: center; 
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    cursor: pointer; 
+    height: auto; /* السماح للكارت بالتمدد مع النص */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word; /* كسر الكلمات الطويلة جداً */
+}
 
-        .ticker { position: fixed; bottom: 0; width: 100%; background: #000; padding: 8px 0; font-size: 15px; z-index: 100; border-top: 1px solid var(--glass-border); }
+.market-card h3 {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    white-space: normal; /* السماح للنص بالنزول لسطر جديد */
+    line-height: 1.4;
+}
+
+.market-card:hover { 
+    transform: translateY(-10px); 
+    border-color: var(--primary); 
+    background: rgba(255,255,255,0.12); 
+}
+
+.card-icon { font-size: 50px; display: block; }
+
+/* --- Footer Ticker --- */
+.ticker { 
+    position: fixed; 
+    bottom: 0; 
+    width: 100%; 
+    background: #000; 
+    padding: 8px 0; 
+    font-size: 15px; 
+    z-index: 100; 
+    border-top: 1px solid var(--glass-border); 
+}
+
+/* --- Media Queries (إصلاح التناسب على التلفون) --- */
+@media (max-width: 992px) {
+    .menu-btn { display: flex; }
+    .nav-links { 
+        display: none; 
+        width: 100%; 
+        flex-direction: column; 
+        position: absolute; 
+        top: 60px; 
+        left: 0; 
+        background: #0b1120; 
+        padding: 20px; 
+        border-radius: 10px; 
+        border: 1px solid var(--glass-border); 
+        z-index: 1001;
+    }
+    .nav-links.show { display: flex; }
+    .navbar { flex-wrap: wrap; font-size: 18px; margin: 10px; }
+    .topbar { font-size: 13px; }
+    
+    .market-grid {
+        grid-template-columns: 1fr; /* كارت واحد في السطر لمنع الضيق */
+    }
+    .market-card {
+        width: 100%;
+        padding: 40px 20px;
+    }
+}
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
