@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <form action="{{ url_for('edit_store', store_id=store.id) }}" method="POST" enctype="multipart/form-data">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تعديل المتجر | لوحة التحكم</title>
     <style>
@@ -44,7 +43,6 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
         }
-        .form-header p { color: var(--text-dim); }
 
         .form-group { margin-bottom: 20px; }
         .form-group label { 
@@ -67,20 +65,12 @@
             box-sizing: border-box;
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            background: rgba(255,255,255,0.05);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
         .grid-row { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
             gap: 20px; 
         }
 
-        /* قسم الساعات المطور */
         .hours-container {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 16px;
@@ -95,15 +85,11 @@
             padding: 12px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .hour-row:last-child { border: none; }
-        .day-name { font-weight: 600; color: #fff; }
-        .time-box { display: flex; flex-direction: column; gap: 4px; }
-        .time-box span { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
 
-        /* معاينة الصور */
+        /* تنسيق الألبوم المطور */
         .image-preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 15px;
             margin-top: 10px;
         }
@@ -112,16 +98,22 @@
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid var(--border-glass);
-            height: 110px;
+            height: 120px;
+            background: #000;
         }
-        .img-card img { width: 100%; height: 100%; object-fit: cover; }
+        .img-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.3s; }
+        .img-card:hover img { opacity: 1; }
+
         .delete-overlay {
             position: absolute; top: 5px; right: 5px;
             background: #ef4444; color: white;
             border: none; border-radius: 50%;
-            width: 22px; height: 22px; cursor: pointer;
-            font-weight: bold; font-size: 14px;
+            width: 25px; height: 25px; cursor: pointer;
+            font-weight: bold; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5; transition: 0.2s;
         }
+        .delete-overlay:hover { background: #ff0000; transform: scale(1.1); }
 
         .submit-btn {
             width: 100%; padding: 16px;
@@ -129,21 +121,12 @@
             color: white; border: none; border-radius: 14px;
             font-size: 18px; font-weight: 600;
             cursor: pointer; margin-top: 30px;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
-        .submit-btn:hover { background: var(--accent-hover); transform: scale(1.01); }
-
-        .back-link { 
-            display: block; text-align: center; margin-top: 20px; 
-            color: var(--text-dim); text-decoration: none; font-size: 14px;
-        }
-        .back-link:hover { color: #fff; }
-
-        textarea.form-control { resize: vertical; min-height: 80px; }
+        .submit-btn:hover { background: var(--accent-hover); }
 
         @media(max-width: 768px) {
             .grid-row, .hour-row { grid-template-columns: 1fr; }
-            .edit-card { padding: 20px; }
         }
     </style>
 </head>
@@ -163,92 +146,72 @@
                 <label>🏷️ اسم المتجر</label>
                 <input type="text" name="name" class="form-control" value="{{ store.name }}" required>
             </div>
-<div class="form-group">
-    <label>🍕 الأصناف المشهورة (Popular Items)</label>
-    <textarea name="popular_items" 
-              class="form-control" 
-              placeholder="مثال: شاورما، كبسة، فتوش..." 
-              style="height: 80px;">{{ store.popular_items }}</textarea>
-    <small style="color: var(--text-dim); font-size: 11px;">افصل بين الأصناف بفاصلة (،)</small>
-</div>
-
             <div class="form-group">
-                <label>🛠️ نوع النشاط</label>
-                <input type="text" name="type" class="form-control" value="{{ store.type }}" list="activity-options" placeholder="اختر أو اكتب نوعاً...">
-                <datalist id="activity-options">
-                    <option value="winkel">
-                    <option value="restaurant">
-                    <option value="Slagerijen">
-                    <option value="services">
-                </datalist>
+                <label>🍕 الأصناف المشهورة</label>
+                <textarea name="popular_items" class="form-control" style="height: 45px;">{{ store.popular_items }}</textarea>
             </div>
         </div>
 
         <div class="grid-row">
+            <div class="form-group">
+                <label>🛠️ نوع النشاط</label>
+                <input type="text" name="type" class="form-control" value="{{ store.type }}" list="activity-options">
+                <datalist id="activity-options">
+                    <option value="winkel"><option value="restaurant"><option value="Slagerijen"><option value="services">
+                </datalist>
+            </div>
+
+
             <div class="form-group">
                 <label>📍 المدينة</label>
                 <input type="text" name="city" class="form-control" value="{{ store.city }}">
             </div>
-            <div class="form-group">
-                <label>🏠 العنوان</label>
-                <input type="text" name="address" class="form-control" value="{{ store.address }}">
-            </div>
         </div>
 
         <div class="grid-row">
             <div class="form-group">
+                <label>🏠 العنوان</label>
+                <input type="text" name="address" class="form-control" value="{{ store.address }}">
+            </div>
+            <div class="form-group">
                 <label>📞 رقم الهاتف</label>
                 <input type="text" name="phone" class="form-control" value="{{ store.phone }}">
             </div>
-            <div class="form-group">
-                <label>⭐ التقييم (0-5)</label>
-                <input type="number" name="rating" step="0.1" min="0" max="5" class="form-control" value="{{ store.rating }}">
-            </div>
         </div>
+   
+<div class="form-group">
 
+            <label>🔗 الرابط الإلكتروني</label>
+
+            <input type="text" name="website" class="form-control" value="{{ store.website }}">
+
+        </div> 
         <div class="form-group">
             <label>🕒 مواعيد العمل الإسبوعية</label>
             <div class="hours-container">
-                {% set days = [
-                    ('Monday', 'الاثنين'), ('Tuesday', 'الثلاثاء'), ('Wednesday', 'الأربعاء'),
-                    ('Thursday', 'الخميس'), ('Friday', 'الجمعة'), ('Saturday', 'السبت'), ('Sunday', 'الأحد')
-                ] %}
-                
+                {% set days = [('Monday', 'الاثنين'), ('Tuesday', 'الثلاثاء'), ('Wednesday', 'الأربعاء'), ('Thursday', 'الخميس'), ('Friday', 'الجمعة'), ('Saturday', 'السبت'), ('Sunday', 'الأحد')] %}
                 {% for day_en, day_ar in days %}
                 <div class="hour-row">
                     <span class="day-name">{{ day_ar }}</span>
-                    <div class="time-box">
-                        <span>الفتح</span>
-                        <input type="time" name="{{ day_en }}_open" class="form-control" 
-                               value="{{ store.hours[day_en].open if store.hours and store.hours[day_en] else '' }}">
-                    </div>
-                    <div class="time-box">
-                        <span>الإغلاق</span>
-                        <input type="time" name="{{ day_en }}_close" class="form-control" 
-                               value="{{ store.hours[day_en].close if store.hours and store.hours[day_en] else '' }}">
-                    </div>
+                    <input type="time" name="{{ day_en }}_open" class="form-control" value="{{ store.hours[day_en].open if store.hours and store.hours[day_en] else '' }}">
+                    <input type="time" name="{{ day_en }}_close" class="form-control" value="{{ store.hours[day_en].close if store.hours and store.hours[day_en] else '' }}">
                 </div>
                 {% endfor %}
             </div>
         </div>
 
         <div class="form-group">
-            <label>🔗 الرابط الإلكتروني</label>
-            <input type="text" name="website" class="form-control" value="{{ store.website }}">
-        </div>
-
-        <div class="form-group">
             <label>📝 وصف المتجر</label>
-            <textarea name="desc" class="form-control">{{ store.desc }}</textarea>
+            <textarea name="desc" class="form-control" style="height: 100px;">{{ store.desc }}</textarea>
         </div>
 
         <div class="form-group">
-            <label>🖼️ ألبوم الصور الحالي</label>
+            <label>🖼️ ألبوم الصور الحالي (اضغط × للحذف الفوري)</label>
             <div class="image-preview-grid">
                 {% for img in store.images %}
                 <div class="img-card">
                     <img src="{{ url_for('static', filename='uploads/' + img.filename) }}">
-                    <button type="button" class="delete-overlay" onclick="if(confirm('حذف هذه الصورة نهائياً؟')) document.getElementById('del-img-{{ img.id }}').submit();">×</button>
+                    <button type="button" class="delete-overlay" onclick="submitDeleteForm('{{ img.id }}')">×</button>
                 </div>
                 {% endfor %}
             </div>
@@ -256,25 +219,32 @@
 
         <div class="form-group">
             <label>📤 إضافة صور إضافية</label>
-            <input type="file" name="images" multiple>
+            <input type="file" name="images" multiple class="form-control">
         </div>
 
-        <button type="submit" class="submit-btn">تحديث البيانات الآن</button>
-        <a href="{{ url_for('admin_panel') }}" class="back-link">← العودة للوحة الإدارة</a>
+        <button type="submit" class="submit-btn">تحديث كافة البيانات الآن</button>
+        <a href="{{ url_for('admin_panel') }}" class="back-link" style="display:block; text-align:center; margin-top:15px; color:var(--text-dim); text-decoration:none;">← العودة للوحة الإدارة</a>
     </form>
-
-    <h4>الصور الحالية</h4>
+</div>
 
 {% for img in store.images %}
-  <div style="display:inline-block;margin:10px;text-align:center;">
-    <img src="{{ url_for('static', filename='uploads/' + img.filename) }}" width="120">
-    <br>
-    <input type="checkbox" name="delete_images" value="{{ img.id }}">
-    حذف
-  </div>
+<form id="delete-form-{{ img.id }}" action="{{ url_for('delete_image', image_id=img.id) }}" method="POST" style="display: none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
 {% endfor %}
-
-</div>
+
+<script>
+function submitDeleteForm(id) {
+    if(confirm('هل أنت متأكد من حذف هذه الصورة نهائياً؟')) {
+        const form = document.getElementById('delete-form-' + id);
+        if(form) {
+            form.submit();
+        } else {
+            alert('خطأ في النظام: لم يتم العثور على طلب الحذف');
+        }
+    }
+}
+</script>
 
 </body>
 </html>
