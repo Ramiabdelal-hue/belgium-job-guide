@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belgium Guide </title>
+    <title>Dalel Belgium</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=99">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
 
 <div class="topbar">
-
     <div class="langs">
         <span onclick="changeLang('nl')" id="btn-nl">NL</span> | 
         <span onclick="changeLang('ar')" id="btn-ar">AR</span> | 
@@ -19,33 +18,28 @@
 </div>
 
 <nav class="navbar">
-    <div class="logo" onclick="showSection('home')" style="cursor: pointer; font-weight: bold; font-size: 12px; font-family: 'Poppins', sans-serif;">
-    <span style="color: #000000;">Belgium</span>  
-    <span style="color: #ffcc00;">Guide en Halal</span> 
-    <span style="color: #fd0000;">Winkels</span>
-
-</div>
-    <div class="menu-btn" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+    <div class="logo" onclick="showSection('home')" style="cursor: pointer; font-weight: bold; font-size: 18px; font-family: 'Poppins', sans-serif;">
+        <span>🏠</span>
+    </div>
+    <div class="menu-btn" onclick="toggleMenu()">
+        <div></div><div></div><div></div>
+    </div>
     <div class="nav-links" id="menuLinks">
         <a onclick="navAction('market-section')" id="nav-market"></a>
         <a onclick="navAction('resturant-section')" id="nav-res"></a>
         <a onclick="navAction('kappers-section')" id="nav-kappers"></a>
         <a onclick="navAction('cars-section')" id="nav-cars"></a>
         <a onclick="navAction('newcomers-section')" id="nav-newcomers"></a>
-        <a href="/about" id="nav-about">Over Ons 🌐</a>
-
+        <a href="/about" id="nav-about"></a>
     </div>
 </nav>
 
 <div id="home" class="content-section active-section">
     <div class="hero">
-    <h1 id="hero-title"></h1>
-    <p id="hero-desc"></p>
-    
-    <a href="{{ url_for('join_us') }}" id="hero-cta" style="text-decoration: none;">
-        انضم إلينا الآن
-    </a>
-</div>
+        <h1 id="hero-title"></h1>
+        <p id="hero-desc"></p>
+        <a href="{{ url_for('join_us') }}" id="hero-cta" style="text-decoration: none;"></a>
+    </div>
 </div>
 
 <div id="market-section" class="content-section">
@@ -69,8 +63,8 @@
         <a href="{{ url_for('resturant') }}" style="text-decoration: none; color: inherit; display: block;">
             <div class="market-card"><span class="card-icon">🥘</span><h3 id="r-c1"></h3></div>
         </a>
-           <a href="{{ url_for('anderresturant') }}" style="text-decoration: none; color: inherit; display: block;">
-        <div class="market-card"><span class="card-icon">🥗</span><h3 id="r-c3"></h3></div>
+        <a href="{{ url_for('anderresturant') }}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="market-card"><span class="card-icon">🥗</span><h3 id="r-c3"></h3></div>
         </a>
     </div>
 </div>
@@ -81,80 +75,45 @@
         <a href="{{ url_for('arabisch') }}" style="text-decoration: none; color: inherit; display: block;">
             <div class="market-card"><span class="card-icon">💈</span><h3 id="l-k1"></h3></div>
         </a>
-         <a href="{{ url_for('turkish') }}" style="text-decoration: none; color: inherit; display: block;">
-             <div class="market-card"><span class="card-icon">✂️</span><h3 id="l-k2"></h3></div>
+        <a href="{{ url_for('turkish') }}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="market-card"><span class="card-icon">✂️</span><h3 id="l-k2"></h3></div>
         </a>
     </div>
 </div>
 
 <div id="cars-section" class="content-section">
     <h2 class="section-title" id="title-cars"></h2>
-         <div class="market-grid">
+    <div class="market-grid">
         <a href="{{ url_for('garag') }}" style="text-decoration: none; color: inherit; display: block;">
             <div class="market-card"><span class="card-icon">🔧</span><h3 id="sub-c1"></h3></div>
         </a>
         <a href="{{ url_for('rijscholen') }}" style="text-decoration: none; color: inherit; display: block;">
-          <div class="market-card"><span class="card-icon">🧑‍🏫</span><h3 id="sub-c2"></h3></div>
+            <div class="market-card"><span class="card-icon">🧑‍🏫</span><h3 id="sub-c2"></h3></div>
         </a>
-
-        </div>
-    </div>
-
-    <div id="extra-cars-grid" style="display: none;">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <button onclick="backToCarsMain()" style="padding: 10px 20px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc;"> ← Terug </button>
-        </div>
-        <div class="market-grid">
-            <div class="market-card">
-                <span class="card-icon">🔧</span>
-                <h3 id="sub-c1">Garage & Mechaniek</h3>
-            </div>
-            <div class="market-card">
-                <span class="card-icon">🧑‍🏫</span>
-                <h3 id="sub-c2">Carrosserie</h3>
-            </div>
-        </div>
+        <a href="{{ url_for('taxi') }}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="market-card"><span class="card-icon">🚖</span><h3 id="sub-c3-taxi"></h3></div>
+        </a>
     </div>
 </div>
 
 <div id="newcomers-section" class="content-section">
     <h2 style="text-align:center; margin-bottom:30px;" id="title-newcomers"></h2>
     <div id="main-newcomers-grid" class="market-grid">
-        
         <a href="{{ url_for('verblijf') }}" style="text-decoration: none; color: inherit;">
-                    <div class="market-card">
-                            <span class="card-icon">📜</span>
-                            <h3 id="n-c2">Verblijf</h3>
-                    </div>
+            <div class="market-card"><span class="card-icon">📜</span><h3 id="n-c2"></h3></div>
         </a>
-
-            <a href="{{ url_for('lawyer') }}" style="text-decoration: none; color: inherit;">
-                    <div class="market-card">
-                            <span class="card-icon">⚖️</span>
-                            <h3 id="n-s1">Immigratieadvocaten</h3>             
-                    </div>
-
-            </a>
-            <a href="{{ url_for('translate') }}" style="text-decoration: none; color: inherit;">
-                    <div class="market-card">
-                            <span class="card-icon">📄</span>
-                            <h3 id="n-s2">Vertaalbureaus</h3>             
-                    </div>
-            </a>
-
-            <a href="{{ url_for('werk') }}" style="text-decoration: none; color: inherit;">
-                    <div class="market-card">
-                            <span class="card-icon">💼</span>
-                            <h3 id="n-c3">werk</h3>             
-                    </div>
-            </a>
-
-            <a href="{{ url_for('taal') }}" style="text-decoration: none; color: inherit;">
-                    <div class="market-card">
-                            <span class="card-icon">🗣</span>
-                            <h3 id="n-c4">Taal</h3>             
-                    </div>
-            </a>
+        <a href="{{ url_for('lawyer') }}" style="text-decoration: none; color: inherit;">
+            <div class="market-card"><span class="card-icon">⚖️</span><h3 id="n-s1"></h3></div>
+        </a>
+        <a href="{{ url_for('translate') }}" style="text-decoration: none; color: inherit;">
+            <div class="market-card"><span class="card-icon">📄</span><h3 id="n-s2"></h3></div>
+        </a>
+        <a href="{{ url_for('werk') }}" style="text-decoration: none; color: inherit;">
+            <div class="market-card"><span class="card-icon">💼</span><h3 id="n-c3"></h3></div>
+        </a>
+        <a href="{{ url_for('taal') }}" style="text-decoration: none; color: inherit;">
+            <div class="market-card"><span class="card-icon">🗣</span><h3 id="n-c4"></h3></div>
+        </a>
     </div>
 </div>
 
@@ -163,9 +122,6 @@
 
 <div class="ticker"><marquee id="tick-text"></marquee></div>
 
-
-<script src="{{ url_for('static', filename='js/index.js') }}?v=3.0"></script>
+<script src="static/js/index.js"></script>
 </body>
 </html>
-
-
