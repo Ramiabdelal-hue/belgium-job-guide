@@ -46,7 +46,7 @@ body {
 .section-title { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--text-gray); }
 
 .container {
-   grid-template-columns: repeat(3, 1fr);
+   grid-template-columns: repeat(1, 3fr);
 }
 
 /* تصميم الكارت الجديد */
@@ -259,4 +259,5 @@ body {
         height: 130px;
     }
 }
+
 
