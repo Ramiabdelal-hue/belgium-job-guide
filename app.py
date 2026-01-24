@@ -140,6 +140,31 @@ def resturant(): return generic_store_route("resturant", "resturant")
 @app.route("/taxi")
 def taxi(): return generic_store_route("taxi", "taxi")
 
+# ---------------- DELETE IMAGE ROUTE ----------------
+@app.route("/admin/delete-image/<int:image_id>", methods=["POST"])
+@admin_required
+def delete_image(image_id):
+    try:
+        # البحث عن الصورة في جدول StoreImage
+        img = StoreImage.query.get_or_404(image_id)
+        
+        # مسح الملف الفعلي من المجلد static/uploads
+        image_path = os.path.join(app.config["UPLOAD_FOLDER"], img.filename)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        
+        # حذف السجل من قاعدة البيانات
+        db.session.delete(img)
+        db.session.commit()
+        
+        flash("✅ تم حذف الصورة بنجاح")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"❌ خطأ أثناء حذف الصورة: {str(e)}")
+    
+    return redirect(request.referrer or url_for('admin_panel'))
+
+
 @app.route("/slag")
 def slag(): return generic_store_route("slag", "slag")
 @app.route("/garag")
@@ -281,9 +306,10 @@ def change_password():
 @app.route("/admin/edit/<int:store_id>", methods=["GET", "POST"])
 @admin_required
 def edit_store(store_id):
+    store = Store.query.get_or_404(store_id)
     try:
-        store = Store.query.get_or_404(store_id)
         if request.method == "POST":
+            # تحديث البيانات الأساسية
             store.name = request.form.get("name")
             store.type = request.form.get("type")
             store.city = request.form.get("city")
@@ -291,9 +317,11 @@ def edit_store(store_id):
             store.website = request.form.get("website")
             store.phone = request.form.get("phone")
             store.desc = request.form.get("desc")
-            store.artr = request.form.get("artr")
             store.rating = float(request.form.get("rating") or 0)
+            store.artr=request.form.get("artr"),
+            store.popular_items = request.form.get("popular_items")
 
+            # تحديث ساعات العمل
             week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             hours_data = {}
             for day in week_days:
@@ -302,31 +330,26 @@ def edit_store(store_id):
                 hours_data[day] = {"open": open_t, "close": close_t} if open_t and close_t else None
             store.hours = hours_data
 
-            delete_images = request.form.getlist("delete_images")
-            for img_id in delete_images:
-                img = StoreImage.query.get(img_id)
-                if img and img.store_id == store.id:
-                    image_path = os.path.join(app.config["UPLOAD_FOLDER"], img.filename)
-                    if os.path.exists(image_path):
-                        os.remove(image_path)
-                    db.session.delete(img)
-
+            # معالجة الصور الجديدة
             if 'images' in request.files:
                 for file in request.files.getlist('images'):
                     if file and allowed_file(file.filename):
                         unique_name = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
                         file.save(os.path.join(app.config["UPLOAD_FOLDER"], unique_name))
-                        db.session.add(StoreImage(filename=unique_name, store_id=store.id))
+                        new_img = StoreImage(filename=unique_name, store_id=store.id)
+                        db.session.add(new_img)
 
             db.session.commit()
-            flash("✅ تم التحديث بنجاح")
+            flash("✅ تم تحديث بيانات المتجر بنجاح")
             return redirect(url_for("admin_panel"))
+
         return render_template("editstore.html", store=store)
+
     except Exception as e:
         db.session.rollback()
-        flash(f"❌ خطأ أثناء التعديل: {str(e)}")
+        # هنا تم إصلاح رسالة الخطأ لتكون واضحة
+        flash(f"❌ خطأ تقني: {str(e)}")
         return redirect(url_for("admin_panel"))
-
 @app.route("/admin/approve/<int:req_id>", methods=["POST"])
 @admin_required
 def approve_request(req_id):
