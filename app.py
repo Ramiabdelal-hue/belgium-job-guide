@@ -137,6 +137,9 @@ def generic_store_route(template_name, store_type):
 
 @app.route("/resturant")
 def resturant(): return generic_store_route("resturant", "resturant")
+@app.route("/taxi")
+def taxi(): return generic_store_route("taxi", "taxi")
+
 @app.route("/slag")
 def slag(): return generic_store_route("slag", "slag")
 @app.route("/garag")
