@@ -225,6 +225,13 @@
     {% endwith %}
 
     <div class="card">
+	
+		<div class="mb-4">
+			<a href="{{ url_for('create_customer') }}" class="btn btn-info text-white shadow">
+				<i class="fas fa-user-plus"></i> إنشاء حسابات للزبائن
+			</a>
+		</div>
+	
         <h3>➕ إضافة متجر جديد للمنصة</h3>
 
         <form method="POST" action="{{ url_for('admin_panel') }}" enctype="multipart/form-data">
@@ -257,6 +264,7 @@
                 <div>
                     <label>رقم الهاتف</label>
                     <input name="phone" placeholder="+49 123 456789">
+        
                 </div>
                 <div>
                     <label>الموقع الإلكتروني</label>
@@ -284,6 +292,7 @@
                     <input type="file" name="images" multiple accept="image/*" style="padding: 10px;">
                 </div>
             </div>
+
 
             <div style="margin-top: 20px;">
                 <label>وصف المتجر</label>
@@ -352,7 +361,17 @@
                 </div>
             </div>
 
+
             <div class="actions" style="display: flex; gap: 10px; margin-top: 20px;">
+
+<a href="{{ url_for('manage_products', store_id=store.id) }}" class="btn btn-sm btn-success">
+   <i class="fas fa-plus"></i> إضافة أصناف
+</a>
+
+<a href="{{ url_for('manage_products', store_id=store.id) }}" class="btn-products" style="background: #0ea5e9; color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; display: inline-block;">
+    📦 إدارة الأصناف والعروض
+</a>
+
                 <a href="{{ url_for('edit_store', store_id=store.id) }}" class="btn-edit">تعديل</a>
                 <form method="POST" action="{{ url_for('delete_store', store_id=store.id) }}"
                       onsubmit="return confirm('هل أنت متأكد من حذف المتجر؟ لا يمكن التراجع عن هذا الإجراء.');" style="display:inline;">
