@@ -15,6 +15,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 # ---------------- CONFIGURATION ----------------
 app = Flask(__name__)
 
@@ -32,10 +33,11 @@ if database_uri.startswith("postgres://"):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 # -----------------------------------------------
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'customer_login' # اسم الدالة التي تفتح صفحة تسجيل الدخول
+login_manager.login_view = 'customer_login'  # اسم الدالة التي تفتح صفحة تسجيل الدخول
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -43,6 +45,7 @@ def load_user(user_id):
 
 csrf = CSRFProtect(app)
 Talisman(app, content_security_policy=None, force_https=False)
+
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
@@ -74,9 +77,9 @@ class Store(db.Model):
     phone = db.Column(db.String(20))
     desc = db.Column(db.Text)
     rating = db.Column(db.Float, default=0)
-    category = db.Column(db.String(50), nullable=True) 
+    category = db.Column(db.String(50), nullable=True)
     views = db.Column(db.Integer, default=0)
-    hours = db.Column(db.JSON) 
+    hours = db.Column(db.JSON)
     popular_items = db.Column(db.String(200))
     artr = db.Column(db.String(100))
     images = db.relationship("StoreImage", cascade="all, delete-orphan", backref="store", lazy="joined")
@@ -102,20 +105,15 @@ class StoreImage(db.Model):
     filename = db.Column(db.String(200))
     store_id = db.Column(db.Integer, db.ForeignKey("store.id"))
 
-
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     image = db.Column(db.String(200))
-    
-    # الأسعار باليورو
-    price_before = db.Column(db.Numeric(10, 2), nullable=True) # السعر الأصلي
-    price_after = db.Column(db.Numeric(10, 2), nullable=True)  # السعر بعد الخصم
-    
+    price_before = db.Column(db.Numeric(10, 2), nullable=True)
+    price_after = db.Column(db.Numeric(10, 2), nullable=True)
     has_offer = db.Column(db.Boolean, default=False)
     offer_start = db.Column(db.Date, nullable=True)
     offer_end = db.Column(db.Date, nullable=True)
-    
     notes = db.Column(db.Text)
     barcode = db.Column(db.String(200), nullable=True)
     store_id = db.Column(db.Integer, db.ForeignKey("store.id"), nullable=False)
@@ -126,12 +124,11 @@ class Admin(db.Model):
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(200))
 
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False) # هنا يكتب اسم المحل
+    username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    store_id = db.Column(db.Integer, db.ForeignKey('store.id')) # ربط المستخدم بمتجره
+    store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
 
 # ---------------- HELPERS ----------------
 def admin_required(f):
@@ -145,20 +142,21 @@ def admin_required(f):
 @app.template_filter('from_json')
 def from_json_filter(value):
     if value:
-        if isinstance(value, dict): return value
-        try: return json.loads(value)
-        except: return {}
+        if isinstance(value, dict):
+            return value
+        try:
+            return json.loads(value)
+        except:
+            return {}
     return {}
 
+# ---------------- ROUTES ----------------
 
 @app.route("/admin/store/<int:store_id>/view-products")
 def view_products(store_id):
-    # Flask سيأخذ الرقم من الرابط ويضعه في متغير store_id تلقائياً
     store = Store.query.get_or_404(store_id)
     products = Product.query.filter_by(store_id=store_id).all()
-    return render_template("store_public_view.html", store=store, products=products)
-
-
+    return render_template("view-products.html", store=store, products=products)
 
 # ---------------- PUBLIC ROUTES ----------------
 @app.route("/")
@@ -170,93 +168,70 @@ def market():
     search = request.args.get("q", "").strip()
     city = request.args.get("city", "").strip()
     query = Store.query.filter(Store.type.in_(["market", "winkel"]))
-    if search: query = query.filter(Store.name.ilike(f"%{search}%"))
-    if city: query = query.filter(Store.city.ilike(f"%{city}%"))
+    if search:
+        query = query.filter(Store.name.ilike(f"%{search}%"))
+    if city:
+        query = query.filter(Store.city.ilike(f"%{city}%"))
     return render_template("market.html", stores=query.all(), search=search, city=city)
 
 def generic_store_route(template_name, store_type):
     q = request.args.get('q', '').strip()
     query = Store.query.filter_by(type=store_type)
-    if q: query = query.filter((Store.name.ilike(f"%{q}%")) | (Store.city.ilike(f"%{q}%")))
+    if q:
+        query = query.filter((Store.name.ilike(f"%{q}%")) | (Store.city.ilike(f"%{q}%")))
     return render_template(f"{template_name}.html", stores=query.all())
 
 @app.route("/resturant")
-def resturant(): return generic_store_route("resturant", "resturant")
+def resturant():
+    return generic_store_route("resturant", "resturant")
+
 @app.route("/taxi")
-def taxi(): return generic_store_route("taxi", "taxi")
-
-
-@app.route("/customer-login", methods=["GET", "POST"])
-def customer_login():
-    # إذا كان المستخدم مسجلاً دخوله بالفعل، نوجهه لصفحته مباشرة
-    if current_user.is_authenticated:
-        return redirect(url_for('manage_products', store_id=current_user.store_id))
-    
-    if request.method == "POST":
-        u_name = request.form.get("username")
-        p_word = request.form.get("password")
-        
-        # البحث عن المستخدم في قاعدة البيانات
-        user = User.query.filter_by(username=u_name).first()
-        
-        # التحقق من وجود المستخدم ومطابقة كلمة المرور المشفرة
-        if user and check_password_hash(user.password, p_word): 
-            login_user(user)
-            flash(f"مرحباً بك مجدداً، {user.username}!", "success")
-            return redirect(url_for('manage_products', store_id=user.store_id))
-        else:
-            flash("❌ بيانات الدخول غير صحيحة أو الحساب غير موجود")
-            
-    return render_template("customer.html")
-
-
-# ---------------- DELETE IMAGE ROUTE ----------------
-@app.route("/admin/delete-image/<int:image_id>", methods=["POST"])
-@admin_required
-def delete_image(image_id):
-    try:
-        # البحث عن الصورة في جدول StoreImage
-        img = StoreImage.query.get_or_404(image_id)
-        
-        # مسح الملف الفعلي من المجلد static/uploads
-        image_path = os.path.join(app.config["UPLOAD_FOLDER"], img.filename)
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        
-        # حذف السجل من قاعدة البيانات
-        db.session.delete(img)
-        db.session.commit()
-        
-        flash("✅ تم حذف الصورة بنجاح")
-    except Exception as e:
-        db.session.rollback()
-        flash(f"❌ خطأ أثناء حذف الصورة: {str(e)}")
-    
-    return redirect(request.referrer or url_for('admin_panel'))
-
+def taxi():
+    return generic_store_route("taxi", "taxi")
 
 @app.route("/slag")
-def slag(): return generic_store_route("slag", "slag")
+def slag():
+    return generic_store_route("slag", "slag")
+
 @app.route("/garag")
-def garag(): return generic_store_route("garag", "garag")
+def garag():
+    return generic_store_route("garag", "garag")
+
 @app.route("/taal")
-def taal(): return generic_store_route("taal", "taal")
+def taal():
+    return generic_store_route("taal", "taal")
+
 @app.route("/lawyer")
-def lawyer(): return generic_store_route("lawyer", "lawyer")
+def lawyer():
+    return generic_store_route("lawyer", "lawyer")
+
 @app.route("/translate")
-def translate(): return generic_store_route("translate", "translate")
+def translate():
+    return generic_store_route("translate", "translate")
+
 @app.route("/rijscholen")
-def rijscholen(): return generic_store_route("rijscholen", "rijscholen")
+def rijscholen():
+    return generic_store_route("rijscholen", "rijscholen")
+
 @app.route("/werrk")
-def werk(): return generic_store_route("werk", "werk")
+def werk():
+    return generic_store_route("werrk", "werrk")
+
 @app.route("/ekama")
-def ekama(): return generic_store_route("ekama", "ekama")
+def ekama():
+    return generic_store_route("ekama", "ekama")
+
 @app.route("/anderresturant")
-def anderresturant(): return generic_store_route("anderresturant", "anderresturant")
+def anderresturant():
+    return generic_store_route("anderresturant", "anderresturant")
+
 @app.route("/arabisch")
-def arabisch(): return generic_store_route("arabisch", "arabisch")
+def arabisch():
+    return generic_store_route("arabisch", "arabisch")
+
 @app.route("/turkish")
-def turkish(): return generic_store_route("turkish", "turkish")
+def turkish():
+    return generic_store_route("turkish", "turkish")
 
 @app.route("/sweets")
 def sweets():
@@ -269,7 +244,8 @@ def verblijf():
     return render_template('verblijf.html', stores=stores)
 
 @app.route("/about")
-def about(): return render_template("about.html")
+def about():
+    return render_template("about.html")
 
 @app.route("/store/<int:store_id>")
 def store_details(store_id):
@@ -279,12 +255,50 @@ def store_details(store_id):
     return render_template("storedetails.html", store=store)
 
 @app.route("/contact")
-def contact(): return render_template("contact.html")
+def contact():
+    return render_template("contact.html")
+
+# ---------------- AUTH (CUSTOMER) ----------------
+@app.route("/customer-login", methods=["GET", "POST"])
+def customer_login():
+    if current_user.is_authenticated:
+        return redirect(url_for('manage_products', store_id=current_user.store_id))
+    
+    if request.method == "POST":
+        u_name = request.form.get("username")
+        p_word = request.form.get("password")
+        user = User.query.filter_by(username=u_name).first()
+        
+        if user and check_password_hash(user.password, p_word):
+            login_user(user)
+            flash(f"مرحباً بك مجدداً، {user.username}!", "success")
+            return redirect(url_for('manage_products', store_id=user.store_id))
+        else:
+            flash("❌ بيانات الدخول غير صحيحة أو الحساب غير موجود")
+            
+    return render_template("customer.html")
+
+# ---------------- DELETE IMAGE ROUTE ----------------
+@app.route("/admin/delete-image/<int:image_id>", methods=["POST"])
+@admin_required
+def delete_image(image_id):
+    try:
+        img = StoreImage.query.get_or_404(image_id)
+        image_path = os.path.join(app.config["UPLOAD_FOLDER"], img.filename)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        db.session.delete(img)
+        db.session.commit()
+        flash("✅ تم حذف الصورة بنجاح")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"❌ خطأ أثناء حذف الصورة: {str(e)}")
+    
+    return redirect(request.referrer or url_for('admin_panel'))
 
 # ---------------- ADMIN ROUTES ----------------
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
-    # إذا كان الأدمن مسجلاً دخوله بالفعل، انقله للوحة التحكم
     if session.get("admin"):
         return redirect(url_for("admin_panel"))
 
@@ -295,12 +309,9 @@ def admin_login():
         admin = Admin.query.filter_by(username=u_name).first()
         
         if admin and check_password_hash(admin.password, p_word):
-            # مسح الجلسة القديمة قبل تسجيل الجديد
             session.clear()
             session["admin"] = admin.id
-            # جعل الجلسة دائمة (تنتهي بمدة محددة في الإعدادات وليس عند غلق المتصفح)
             session.permanent = True 
-            
             flash("✅ تم تسجيل دخول المسؤول بنجاح", "success")
             return redirect(url_for("admin_panel"))
         
@@ -387,7 +398,7 @@ def change_password():
     except Exception as e:
         db.session.rollback()
         flash(f"❌ خطأ تقني: {str(e)}")
-        return redirect(url_for("admin_panel")) 
+        return redirect(url_for("admin_panel"))
 
 @app.route("/admin/edit/<int:store_id>", methods=["GET", "POST"])
 @admin_required
@@ -395,7 +406,6 @@ def edit_store(store_id):
     store = Store.query.get_or_404(store_id)
     try:
         if request.method == "POST":
-            # تحديث البيانات الأساسية
             store.name = request.form.get("name")
             store.type = request.form.get("type")
             store.city = request.form.get("city")
@@ -404,10 +414,9 @@ def edit_store(store_id):
             store.phone = request.form.get("phone")
             store.desc = request.form.get("desc")
             store.rating = float(request.form.get("rating") or 0)
-            store.artr=request.form.get("artr"),
+            store.artr = request.form.get("artr")
             store.popular_items = request.form.get("popular_items")
 
-            # تحديث ساعات العمل
             week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             hours_data = {}
             for day in week_days:
@@ -416,7 +425,6 @@ def edit_store(store_id):
                 hours_data[day] = {"open": open_t, "close": close_t} if open_t and close_t else None
             store.hours = hours_data
 
-            # معالجة الصور الجديدة
             if 'images' in request.files:
                 for file in request.files.getlist('images'):
                     if file and allowed_file(file.filename):
@@ -433,10 +441,9 @@ def edit_store(store_id):
 
     except Exception as e:
         db.session.rollback()
-        # هنا تم إصلاح رسالة الخطأ لتكون واضحة
         flash(f"❌ خطأ تقني: {str(e)}")
         return redirect(url_for("admin_panel"))
-    
+
 @app.route("/admin/approve/<int:req_id>", methods=["POST"])
 @admin_required
 def approve_request(req_id):
@@ -490,18 +497,17 @@ def delete_store(store_id):
     store = Store.query.get_or_404(store_id)
     for img in store.images:
         path = os.path.join(app.config["UPLOAD_FOLDER"], img.filename)
-        if os.path.exists(path): os.remove(path)
+        if os.path.exists(path):
+            os.remove(path)
     db.session.delete(store)
     db.session.commit()
     flash("🗑️ تم حذف المتجر")
     return redirect(url_for("admin_panel"))
 
-
-# 2. تعديل دالة إضافة المنتج لتسمح للزبون المسجل بالدخول
+# ---------------- PRODUCTS (CUSTOMER) ----------------
 @app.route("/admin/store/<int:store_id>/add-product", methods=["POST"])
 @login_required
 def add_product(store_id):
-    # 1. فحص الأمان: هل هذا المتجر يخص المستخدم الحالي؟
     if current_user.store_id != store_id:
         flash("🚫 غير مصرح لك بالإضافة لهذا المتجر")
         return redirect(url_for('customer_login'))
@@ -510,38 +516,32 @@ def add_product(store_id):
         p_name = request.form.get("product_name")
         p_barcode = request.form.get("barcode") or None
         
-        # 2. فحص تكرار الاسم في نفس المتجر (إعادة الميزة التي سألت عنها)
         existing_name = Product.query.filter_by(store_id=store_id, name=p_name).first()
         if existing_name:
             flash(f"❌ خطأ: المنتج '{p_name}' موجود بالفعل في متجرك!")
             return redirect(url_for('manage_products', store_id=store_id))
 
         if p_barcode:
-            # ابحث هل هذا الباركود موجود عند أي شخص آخر؟
-            existing_barcode = Product.query.filter_by(barcode=p_barcode).first()     
-        
-        # في حالة التعديل، تأكد أن الباركود المكرر ليس للمنتج نفسه الذي تعدله
-            if existing_barcode and (not product or existing_barcode.id != product.id):
+            existing_barcode = Product.query.filter_by(barcode=p_barcode).first()
+            if existing_barcode:
                 flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر في النظام")
                 return redirect(request.referrer)
 
-        # 4. معالجة رفع الصورة
-        filename = "default_product.png" 
+        filename = "default_product.png"
         if 'product_image' in request.files:
             file = request.files['product_image']
             if file and file.filename != '' and allowed_file(file.filename):
                 filename = f"prod_{uuid.uuid4().hex}_{secure_filename(file.filename)}"
                 file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-        # 5. حفظ الصنف الجديد
         p_before = float(request.form.get("price_before") or 0.0)
         p_after = float(request.form.get("price_after") or 0.0)
         
         new_product = Product(
-            name=p_name, 
-            barcode=p_barcode, 
-            price_before=p_before, 
-            price_after=p_after, 
+            name=p_name,
+            barcode=p_barcode,
+            price_before=p_before,
+            price_after=p_after,
             image=filename,
             store_id=store_id
         )
@@ -559,15 +559,12 @@ def add_product(store_id):
 @app.route("/admin/store/<int:store_id>/manage")
 @login_required
 def manage_products(store_id):
-    # التأكد أن المستخدم الحالي هو صاحب هذا المتجر أو أدمن عام
-    # نستخدم hasattr للتأكد أن اليوزر لديه store_id (لتجنب أخطاء الأدمن العام)
     if hasattr(current_user, 'store_id') and current_user.store_id:
         if current_user.store_id != store_id:
             flash("🚫 غير مصرح لك بدخول هذا المتجر")
             return redirect(url_for('customer_login'))
     
     store = Store.query.get_or_404(store_id)
-    # تأكد أن اسم الملف هنا هو manageproducts.html كما هو عندك
     return render_template("manageproducts.html", store=store)
 
 @app.route("/admin/product/edit/<int:product_id>", methods=["POST"])
@@ -575,7 +572,6 @@ def manage_products(store_id):
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     
-    # فحص الأمان
     if hasattr(current_user, 'store_id') and current_user.store_id:
         if current_user.store_id != product.store_id:
             flash("🚫 غير مصرح لك بالتعديل")
@@ -586,23 +582,15 @@ def edit_product(product_id):
         product.barcode = request.form.get("barcode") or None
         product.price_before = float(request.form.get("price_before") or 0)
         product.price_after = float(request.form.get("price_after") or 0)
-        
-        # التعامل مع حقل "تفعيل كعرض خاص"
         product.has_offer = 'has_offer' in request.form
 
-
         p_barcode = request.form.get("barcode")
-
         if p_barcode:
-            # ابحث هل هذا الباركود موجود عند أي شخص آخر؟
             existing_barcode = Product.query.filter_by(barcode=p_barcode).first()
-    
-            # في حالة التعديل، تأكد أن الباركود المكرر ليس للمنتج نفسه الذي تعدله
-            if existing_barcode and (not product or existing_barcode.id != product.id):
+            if existing_barcode and existing_barcode.id != product.id:
                 flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر في النظام")
                 return redirect(request.referrer)
 
-        # معالجة الصورة
         if 'product_image' in request.files:
             file = request.files['product_image']
             if file and file.filename != '' and allowed_file(file.filename):
@@ -618,44 +606,27 @@ def edit_product(product_id):
 
     return redirect(url_for('manage_products', store_id=product.store_id))
 
-
-# ---------------- INITIALIZATION ----------------
-with app.app_context():
-    try:
-        # إنشاء الجداول في PostgreSQL
-        db.create_all()
-        # التأكد من وجود مستخدم أدمن افتراضي في القاعدة الجديدة
-        if not Admin.query.filter_by(username="admin").first():
-            db.session.add(Admin(username="admin", password=generate_password_hash("admin123")))
-            db.session.commit()
-            print("Admin user created successfully.")
-    except Exception as e:
-        print(f"Init Error: {e}")
-
 @app.route("/admin/create-customer", methods=["GET", "POST"])
 @admin_required
 def create_customer():
     stores = Store.query.all()
     if request.method == "POST":
-        u_name = request.form.get("username", "").strip() # strip لإزالة المسافات الزائدة
+        u_name = request.form.get("username", "").strip()
         p_word = request.form.get("password")
         s_id = request.form.get("store_id")
 
-        # 1. التحقق من إدخال جميع الحقول
         if not u_name or not p_word or not s_id:
             flash("⚠️ يرجى ملء جميع الحقول المطلوبة")
             return redirect(url_for('create_customer'))
         
-        # 2. التأكد من عدم تكرار اسم المستخدم
         if User.query.filter_by(username=u_name).first():
             flash("❌ اسم المستخدم هذا موجود مسبقاً")
             return redirect(url_for('create_customer'))
             
         try:
-            # 3. إنشاء المستخدم بكلمة مرور مشفرة
             new_user = User(
-                username=u_name, 
-                password=generate_password_hash(p_word, method='pbkdf2:sha256'), 
+                username=u_name,
+                password=generate_password_hash(p_word, method='pbkdf2:sha256'),
                 store_id=int(s_id)
             )
             db.session.add(new_user)
@@ -676,7 +647,6 @@ def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     store_id = product.store_id
     
-    # فحص الأمان (للتأكد أن الزبون يحذف منتجاته فقط)
     if hasattr(current_user, 'store_id') and current_user.store_id:
         if current_user.store_id != store_id:
             flash("🚫 غير مصرح لك بالحذف")
@@ -692,7 +662,17 @@ def delete_product(product_id):
         
     return redirect(url_for('manage_products', store_id=store_id))
 
+# ---------------- INITIALIZATION ----------------
+with app.app_context():
+    try:
+        db.create_all()
+        if not Admin.query.filter_by(username="admin").first():
+            db.session.add(Admin(username="admin", password=generate_password_hash("admin123")))
+            db.session.commit()
+            print("Admin user created successfully.")
+    except Exception as e:
+        print(f"Init Error: {e}")
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
