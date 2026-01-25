@@ -1,7 +1,6 @@
 import os
 import uuid
 import json
-import qrcode
 from functools import wraps
 from flask import (
     Flask, render_template, request, redirect,
@@ -692,25 +691,8 @@ def delete_product(product_id):
         flash(f"❌ خطأ أثناء الحذف: {str(e)}")
         
     return redirect(url_for('manage_products', store_id=store_id))
-# الرابط الخاص بموقعك
-url = "https://www.dalelbelgium.be"
-
-# إعدادات الـ QR Code
-qr = qrcode.QRCode(
-    version=1,
-    error_correction=qrcode.constants.ERROR_CORRECT_L,
-    box_size=10,
-    border=4,
-)
-qr.add_data(url)
-qr.make(fit=True)
-
-# إنشاء الصورة وحفظها
-img = qr.make_image(fill_color="black", back_color="white")
-img.save("dalel_belgium_qr.png")
-
-print("✅ تم إنشاء الـ QR Code بنجاح باسم dalel_belgium_qr.png")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
