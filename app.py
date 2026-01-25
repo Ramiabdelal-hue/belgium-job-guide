@@ -584,25 +584,37 @@ def manage_products(store_id):
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     
+    # فحص الصلاحيات
     if hasattr(current_user, 'store_id') and current_user.store_id:
         if current_user.store_id != product.store_id:
             flash("🚫 غير مصرح لك بالتعديل")
             return redirect(url_for('customer_login'))
 
     try:
+        # تحديث البيانات الأساسية (نستخدم .get لتجنب الخطأ إذا كان الحقل فارغاً)
         product.name = request.form.get("product_name")
         product.barcode = request.form.get("barcode") or None
-        product.price_before = float(request.form.get("price_before") or 0)
-        product.price_after = float(request.form.get("price_after") or 0)
+        
+        # تحويل السعر مع معالجة الخطأ إذا لم يكن رقماً
+        try:
+            product.price_before = float(request.form.get("price_before") or 0)
+            product.price_after = float(request.form.get("price_after") or 0)
+        except ValueError:
+            product.price_before = 0
+            product.price_after = 0
+
+        # تحديث حالة العرض (Checkbox)
         product.has_offer = 'has_offer' in request.form
 
+        # معالجة الباركود المكرر
         p_barcode = request.form.get("barcode")
         if p_barcode:
-            existing_barcode = Product.query.filter_by(barcode=p_barcode).first()
-            if existing_barcode and existing_barcode.id != product.id:
-                flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر في النظام")
+            existing_barcode = Product.query.filter(Product.barcode == p_barcode, Product.id != product.id).first()
+            if existing_barcode:
+                flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر")
                 return redirect(request.referrer)
 
+        # معالجة الصورة إذا تم رفع واحدة جديدة
         if 'product_image' in request.files:
             file = request.files['product_image']
             if file and file.filename != '' and allowed_file(file.filename):
@@ -612,9 +624,12 @@ def edit_product(product_id):
 
         db.session.commit()
         flash("✅ تم تحديث بيانات الصنف بنجاح")
+        
     except Exception as e:
         db.session.rollback()
-        flash(f"❌ خطأ: {str(e)}")
+        # طباعة الخطأ في سجلات السيرفر للمساعدة في التشخيص
+        print(f"Error updating product: {str(e)}")
+        flash(f"❌ خطأ تقني: {str(e)}")
 
     return redirect(url_for('manage_products', store_id=product.store_id))
 
@@ -688,4 +703,5 @@ with app.app_context():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
