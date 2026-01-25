@@ -9,3 +9,5 @@ flask-talisman
 werkzeug
 qrcode
 gunicorn
+Flask-Login==0.6.3
+Pillow==10.1.0
