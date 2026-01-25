@@ -32,7 +32,6 @@
         @media (max-width: 576px) {
             .img-wrapper { height: 140px; }
             .price-new { font-size: 1.1rem; }
-            .btn-back { width: 100%; margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -59,7 +58,7 @@
         <div class="col-8 col-md-9">
             <div class="input-group shadow-sm rounded-pill overflow-hidden border">
                 <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" id="searchInput" class="form-control border-0" onkeyup="filterProducts()">
+                <input type="text" id="searchInput" class="form-control border-0" placeholder="بحث..." onkeyup="filterProducts()">
             </div>
         </div>
         <div class="col-4 col-md-3">
@@ -72,14 +71,15 @@
 
     <div class="row gx-2 gy-3 row-cols-2 row-cols-md-3 row-cols-lg-4" id="productsGrid">
         {% for product in store.products %}
-        <div class="col product-item" data-name="{{ product.name }}" data-offer="{{ 'true' if product.has_offer else 'false' }}">
+        {# تعديل مهم: حماية اسم المنتج من علامات التنصيص التي تكسر الـ HTML #}
+        <div class="col product-item" data-name="{{ product.name | replace('"', '&quot;') }}" data-offer="{{ 'true' if product.has_offer else 'false' }}">
             <div class="card product-card">
                 <div class="img-wrapper">
                     {% if product.has_offer %}
                         <span class="offer-badge tr" data-key="badge">عرض خاص</span>
                     {% endif %}
                     {% if product.image %}
-                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" loading="lazy" alt="{{ product.name }}">
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" loading="lazy" alt="{{ product.name }}" onerror="this.onerror=null;this.src='https://placehold.co/400x400?text=No+Image';">
                     {% else %}
                         <div class="d-flex h-100 align-items-center justify-content-center text-muted">
                             <i class="fas fa-utensils fa-2x"></i>
@@ -115,13 +115,12 @@
     </div>
 
     <div id="noResults" class="text-center py-5 d-none">
-        <i class="fas fa-search fa-3x text-light mb-3"></i>
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
         <p class="text-muted tr" data-key="no_results">لم يتم العثور على منتجات مطابقة.</p>
     </div>
 </div>
 
 <script>
-// قاموس الترجمات الشامل
 const i18n = {
     ar: {
         title: "قائمة منتجات",
@@ -153,11 +152,13 @@ const i18n = {
 };
 
 function changeLang(lang, btn) {
+    if (!i18n[lang]) return;
+
     // 1. تحديث شكل الأزرار
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if(btn) btn.classList.add('active');
 
-    // 2. تحديث نصوص العناصر التي تحمل كلاس 'tr'
+    // 2. تحديث نصوص العناصر
     document.querySelectorAll('.tr').forEach(el => {
         const key = el.getAttribute('data-key');
         if (i18n[lang][key]) {
@@ -165,18 +166,17 @@ function changeLang(lang, btn) {
         }
     });
 
-    // 3. تحديث خانة البحث (Placeholder)
+    // 3. تحديث Placeholder البحث
     const searchInput = document.getElementById('searchInput');
     if(searchInput) searchInput.placeholder = i18n[lang].search;
 
-    // 4. تغيير اتجاه الصفحة (RTL للعربية و LTR للباقي)
-    const isRtl = (lang === 'ar');
-    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    // 4. الاتجاه واللغة
+    document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
 }
 
 function filterProducts() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
+    const input = document.getElementById('searchInput').value.toLowerCase().trim();
     const filter = document.getElementById('filterSelect').value;
     const items = document.getElementsByClassName('product-item');
     const noResults = document.getElementById('noResults');
@@ -204,11 +204,10 @@ function filterProducts() {
     }
 }
 
-// تشغيل اللغة العربية افتراضياً عند التحميل الأول
+// التشغيل الافتراضي عند التحميل
 document.addEventListener('DOMContentLoaded', () => {
-    // نبحث عن زر اللغة العربية ونضغط عليه برمجياً لتفعيل الحالة الابتدائية
-    const arBtn = document.querySelector('.lang-btn[onclick*="ar"]');
-    if(arBtn) changeLang('ar', arBtn);
+    // التأكد من تطبيق اللغة العربية فوراً
+    changeLang('ar', document.querySelector('.lang-btn[onclick*="ar"]'));
 });
 </script>
 
