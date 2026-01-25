@@ -102,17 +102,23 @@
                 </section>
 
                 <section class="popular-box" style="margin-top: 20px;">
-                    <div class="section-title" id="txt-popular-title" style="border:none;">🌟 Popular Items</div>
+
+                    <div class="mt-4 p-3 bg-light rounded border">
+    
+</div>
                     <div class="tag-list">
                         {% if store.popular_items %}
                             {% for item in store.popular_items.split(',') %}
                                 <span class="popular-tag">{{ item.strip() }}</span>
                             {% endfor %}
                         {% else %}
-                            <span class="popular-tag">Vers & Kwaliteit</span>
+                            <span class="popular-tag"><a href="{{ url_for('view_products', store_id=store.id) }}" class="btn btn-info text-white">
+        <i class="fas fa-eye"></i> Aanbiedingen 
+    </a></span>
                         {% endif %}
                     </div>
                 </section>
+				
             </div>
 
             <div class="map-wrapper">
@@ -155,6 +161,7 @@
                         {% endif %}
                     </div>
                 </section>
+				
             </div>
 
         </div>
