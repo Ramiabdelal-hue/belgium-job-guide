@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>إدارة أصناف {{ store.name }}</title>
+    <style>
+        :root { --primary-color: #0d6efd; }
+        body { background-color: #f8fafc; }
+        .card-header { background-color: var(--primary-color); color: white; border-radius: 15px 15px 0 0 !important; }
+        .table img { object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .rounded-card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .btn-action { margin: 2px; }
+        
+        @media (max-width: 576px) {
+            .container { padding-top: 20px !important; }
+            h2 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'danger' if '❌' in message else 'success' }} alert-dismissible fade show rounded-pill shadow-sm mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <span class="me-2">{{ message }}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary mb-0"><i class="fas fa-boxes me-2"></i> {{ store.name }}</h2>
+        <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+            <i class="fas fa-arrow-right"></i> الصفحه الرئيسيه
+        </a> 
+
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.dalelbelgium.be/store/view_products/{{ store.id }}" 
+     alt="QR Code" 
+     class="img-thumbnail shadow-sm">
+
+
+    </div>
+
+    <div class="card rounded-card mb-4">
+        <div class="card-header p-3">
+            <h5 class="mb-0 fs-6"><i class="fas fa-plus-circle me-1"></i> إضافة صنف جديد</h5>
+        </div>
+        <div class="card-body p-3">
+            <form action="{{ url_for('add_product', store_id=store.id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="col-md-12">
+                    <label class="form-label small fw-bold text-muted"><i class="fas fa-barcode"></i> الباركود</label>
+                    <input type="text" name="barcode" class="form-control rounded-3" placeholder="أدخل رقم الكود">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-muted">اسم المنتج</label>
+                    <input type="text" name="product_name" class="form-control rounded-3" required>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small fw-bold text-muted">السعر (€)</label>
+                    <input type="number" step="0.01" name="price_before" class="form-control rounded-3">
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small fw-bold text-success">سعر العرض (€)</label>
+                    <input type="number" step="0.01" name="price_after" class="form-control rounded-3 border-success">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-muted">الصورة</label>
+                    <input type="file" name="product_image" class="form-control rounded-3" accept="image/*">
+                </div>
+
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">
+                        <i class="fas fa-save me-1"></i> حفظ المنتج
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
+            <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
+            <input type="text" id="adminSearchInput" class="form-control border-0" 
+                   placeholder="ابحث بالاسم أو الباركود..." onkeyup="adminFilterProducts()">
+        </div>
+    </div>
+
+    <div class="card rounded-card border-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead class="bg-light text-muted small">
+                    <tr>
+                        <th>المنتج</th>
+                        <th>السعر</th>
+                        <th>العمليات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in store.products %}
+                    <tr class="product-item" data-name="{{ product.name }}" data-barcode="{{ product.barcode }}">
+                        <td>
+                            <div class="d-flex align-items-center text-start">
+                                {% if product.image %}
+                                <img src="{{ url_for('static', filename='uploads/' + product.image) }}" width="45" height="45" class="me-2">
+                                {% else %}
+                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;"><i class="fas fa-image text-muted"></i></div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-bold small">{{ product.name }}</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">#{{ product.barcode or 'بدون كود' }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if product.has_offer %}
+                                <span class="text-danger fw-bold">{{ product.price_after }}€</span>
+                            {% else %}
+                                <span>{{ product.price_before }}€</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-sm btn-warning btn-action rounded-circle" 
+                                        onclick="openEditModal('{{ product.id }}', '{{ product.name }}', '{{ product.price_before }}', '{{ product.price_after }}', '{{ product.barcode }}', '{{ product.has_offer }}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                
+                                <form action="{{ url_for('delete_product', product_id=product.id) }}" method="POST" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="btn btn-sm btn-outline-danger btn-action rounded-circle" onclick="return confirm('حذف هذا المنتج نهائياً؟')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="editProductForm" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" id="modal_csrf_token" value="{{ csrf_token() }}">
+    
+    <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0 text-center d-block">
+                    <h5 class="fw-bold mt-2">تعديل بيانات الصنف</h5>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="product_id" id="edit_id">
+                    
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted">اسم المنتج</label>
+                        <input type="text" name="product_name" id="edit_name" class="form-control rounded-3" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted">الباركود</label>
+                        <input type="text" name="barcode" id="edit_barcode" class="form-control rounded-3">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="small fw-bold text-muted">السعر الأصلي</label>
+                            <input type="number" step="0.01" name="price_before" id="edit_before" class="form-control rounded-3">
+                        </div>
+                        <div class="col-6">
+                            <label class="small fw-bold text-success">سعر العرض</label>
+                            <input type="number" step="0.01" name="price_after" id="edit_after" class="form-control rounded-3 border-success">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted">تغيير الصورة (اختياري)</label>
+                        <input type="file" name="product_image" class="form-control rounded-3" accept="image/*">
+                    </div>
+
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" name="has_offer" id="edit_has_offer">
+                        <label class="form-check-label fw-bold small" for="edit_has_offer">تفعيل كعرض خاص</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">حفظ التغييرات</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// وظيفة البحث
+function adminFilterProducts() {
+    let input = document.getElementById('adminSearchInput').value.toLowerCase();
+    let items = document.querySelectorAll('.product-item');
+
+    items.forEach(item => {
+        let name = (item.getAttribute('data-name') || "").toLowerCase();
+        let barcode = (item.getAttribute('data-barcode') || "").toLowerCase();
+        if (name.includes(input) || barcode.includes(input)) {
+            item.style.setProperty('display', '', 'important');
+        } else {
+            item.style.setProperty('display', 'none', 'important');
+        }
+    });
+}
+
+// وظيفة فتح المودال وتعبئة كافة البيانات
+function openEditModal(id, name, before, after, barcode, hasOffer) {
+    document.getElementById('edit_id').value = id;
+    document.getElementById('edit_name').value = name;
+    document.getElementById('edit_before').value = before;
+    document.getElementById('edit_after').value = after;
+    document.getElementById('edit_barcode').value = barcode;
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'danger' if '❌' in message else 'success' }} alert-dismissible fade show rounded-pill shadow-sm mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <span class="me-2">{{ message }}</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+    // التعامل مع الـ checkbox الخاص بالعرض
+    document.getElementById('edit_has_offer').checked = (hasOffer === 'True');
+
+    // تحديث رابط الـ action الخاص بالفورم
+    document.getElementById('editProductForm').action = "/admin/product/edit/" + id;
+    
+    // إظهار المودال
+    new bootstrap.Modal(document.getElementById('editProductModal')).show();
+}
+
+function openEditModal(id, name, before, after, barcode, hasOffer) {
+    // تحديث قيم الحقول
+    document.getElementById('edit_id').value = id;
+    document.getElementById('edit_name').value = name;
+    document.getElementById('edit_before').value = before;
+    document.getElementById('edit_after').value = after;
+    document.getElementById('edit_barcode').value = barcode;
+    document.getElementById('edit_has_offer').checked = (hasOffer === 'True');
+
+    // --- السطر الأهم لإصلاح Bad Request ---
+    // نقوم بجلب التوكن الرئيسي من الصفحة ووضعه داخل المودال
+    const mainToken = document.querySelector('input[name="csrf_token"]').value;
+    document.getElementById('modal_csrf_token').value = mainToken;
+
+    document.getElementById('editProductForm').action = "/admin/product/edit/" + id;
+    new bootstrap.Modal(document.getElementById('editProductModal')).show();
+}
+</script>
+</body>
+</html>
