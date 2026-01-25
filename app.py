@@ -690,23 +690,10 @@ with app.app_context():
     except Exception as e:
         print(f"Init Error: {e}")
 
-@app.route("/fix-db")
-def fix_db():
-    try:
-        from sqlalchemy import text
-        # إضافة الأعمدة الجديدة يدوياً في حال عدم وجودها
-        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS barcode VARCHAR(200)'))
-        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS has_offer BOOLEAN DEFAULT FALSE'))
-        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS price_before NUMERIC(10, 2)'))
-        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS price_after NUMERIC(10, 2)'))
-        db.session.commit()
-        return "✅ تم تحديث جدول المنتجات بنجاح أضفنا الأعمدة الجديدة!"
-    except Exception as e:
-        return f"❌ حدث خطأ أثناء التحديث: {str(e)}"
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
