@@ -584,37 +584,28 @@ def manage_products(store_id):
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     
-    # فحص الصلاحيات
+    # فحص صلاحية المستخدم
     if hasattr(current_user, 'store_id') and current_user.store_id:
         if current_user.store_id != product.store_id:
-            flash("🚫 غير مصرح لك بالتعديل")
+            flash("🚫 غير مصرح لك")
             return redirect(url_for('customer_login'))
 
     try:
-        # تحديث البيانات الأساسية (نستخدم .get لتجنب الخطأ إذا كان الحقل فارغاً)
+        # 1. تحديث البيانات النصية
         product.name = request.form.get("product_name")
         product.barcode = request.form.get("barcode") or None
         
-        # تحويل السعر مع معالجة الخطأ إذا لم يكن رقماً
-        try:
-            product.price_before = float(request.form.get("price_before") or 0)
-            product.price_after = float(request.form.get("price_after") or 0)
-        except ValueError:
-            product.price_before = 0
-            product.price_after = 0
+        # 2. تحديث الأسعار (مع تحويل آمن للرقام)
+        p_before = request.form.get("price_before")
+        p_after = request.form.get("price_after")
+        product.price_before = float(p_before) if p_before and p_before.strip() else 0.0
+        product.price_after = float(p_after) if p_after and p_after.strip() else 0.0
 
-        # تحديث حالة العرض (Checkbox)
-        product.has_offer = 'has_offer' in request.form
+        # 3. تحديث حالة العرض (الـ Checkbox)
+        # في HTML الخاص بك الـ ID هو edit_has_offer والاسم has_offer
+        product.has_offer = True if request.form.get("has_offer") else False
 
-        # معالجة الباركود المكرر
-        p_barcode = request.form.get("barcode")
-        if p_barcode:
-            existing_barcode = Product.query.filter(Product.barcode == p_barcode, Product.id != product.id).first()
-            if existing_barcode:
-                flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر")
-                return redirect(request.referrer)
-
-        # معالجة الصورة إذا تم رفع واحدة جديدة
+        # 4. معالجة الصورة
         if 'product_image' in request.files:
             file = request.files['product_image']
             if file and file.filename != '' and allowed_file(file.filename):
@@ -627,8 +618,7 @@ def edit_product(product_id):
         
     except Exception as e:
         db.session.rollback()
-        # طباعة الخطأ في سجلات السيرفر للمساعدة في التشخيص
-        print(f"Error updating product: {str(e)}")
+        print(f"DEBUG ERROR: {str(e)}") # سيظهر في سجلات السيرفر
         flash(f"❌ خطأ تقني: {str(e)}")
 
     return redirect(url_for('manage_products', store_id=product.store_id))
@@ -700,8 +690,23 @@ with app.app_context():
     except Exception as e:
         print(f"Init Error: {e}")
 
+@app.route("/fix-db")
+def fix_db():
+    try:
+        from sqlalchemy import text
+        # إضافة الأعمدة الجديدة يدوياً في حال عدم وجودها
+        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS barcode VARCHAR(200)'))
+        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS has_offer BOOLEAN DEFAULT FALSE'))
+        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS price_before NUMERIC(10, 2)'))
+        db.session.execute(text('ALTER TABLE product ADD COLUMN IF NOT EXISTS price_after NUMERIC(10, 2)'))
+        db.session.commit()
+        return "✅ تم تحديث جدول المنتجات بنجاح أضفنا الأعمدة الجديدة!"
+    except Exception as e:
+        return f"❌ حدث خطأ أثناء التحديث: {str(e)}"
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
