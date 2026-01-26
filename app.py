@@ -156,7 +156,7 @@ def from_json_filter(value):
 def view_products(store_id):
     store = Store.query.get_or_404(store_id)
     products = Product.query.filter_by(store_id=store_id).all()
-    return render_template("view-products.html", store=store, products=products)
+    return render_template("view_products.html", store=store, products=products)
 
 # ---------------- PUBLIC ROUTES ----------------
 @app.route("/")
@@ -693,6 +693,7 @@ with app.app_context():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
