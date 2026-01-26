@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>تعديل المستخدم</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background:#f9f9f9; }
+form { max-width: 400px; margin: auto; background:#fff; padding:20px; box-shadow:0 0 10px rgba(0,0,0,0.05); border-radius:8px; }
+label { display:block; margin-top:10px; font-weight:600; }
+input, select { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
+button { margin-top:15px; padding:10px; width:100%; background:#3498db; color:white; border:none; border-radius:5px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;">تعديل المستخدم</h2>
+
+<form method="POST">
+
+<!-- CSRF token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>اسم المستخدم</label>
+    <input type="text" name="username" value="{{ user.username }}" required>
+
+    <label>كلمة المرور (اتركها إذا لم ترغب بتغييرها)</label>
+    <input type="password" name="password">
+
+    <label>المتجر المرتبط</label>
+    <select name="store_id">
+        <option value="">-- بدون متجر --</option>
+        {% for store in stores %}
+        <option value="{{ store.id }}" {% if user.store_id == store.id %}selected{% endif %}>{{ store.name }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">حفظ التغييرات</button>
+</form>
+
+</body>
+</html>
