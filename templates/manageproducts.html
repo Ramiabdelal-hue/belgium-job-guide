@@ -8,127 +8,175 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>إدارة أصناف {{ store.name }}</title>
     <style>
-        :root { --primary-color: #0d6efd; }
-        body { background-color: #f8fafc; }
-        .card-header { background-color: var(--primary-color); color: white; border-radius: 15px 15px 0 0 !important; }
-        .table img { object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .rounded-card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .btn-action { margin: 2px; }
-        @media (max-width: 576px) { .container { padding-top: 20px !important; } h2 { font-size: 1.2rem; } }
+        :root { --primary-color: #0d6efd; --accent-color: #f8fafc; }
+        body { background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .rounded-card { border: none; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); background: white; }
+        .card-header { background-color: var(--primary-color); color: white; border-radius: 15px 15px 0 0 !important; font-weight: bold; }
+        .table thead { background-color: #f8fafc; border-bottom: 2px solid #edf2f7; }
+        .table th { font-size: 0.8rem; text-transform: uppercase; color: #64748b; padding: 15px; }
+        .table td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; }
+        .badge-price { padding: 5px 10px; border-radius: 8px; font-weight: 700; display: inline-block; }
+        .old-price-tag { background: #f1f5f9; color: #94a3b8; text-decoration: line-through; font-size: 0.8rem; }
+        .new-price-tag { background: #fee2e2; color: #ef4444; font-size: 0.95rem; }
+        .regular-price-tag { background: #f0fdf4; color: #16a34a; font-size: 0.95rem; }
+        .info-pill { font-size: 0.7rem; background: #eff6ff; color: #3b82f6; padding: 2px 8px; border-radius: 50px; border: 1px solid #dbeafe; }
+        .notes-area { max-width: 200px; font-size: 0.75rem; color: #475569; line-height: 1.4; }
+        .img-preview { width: 55px; height: 55px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        @media (max-width: 768px) { .hide-mobile { display: none; } }
     </style>
 </head>
 <body> 
+
 <div class="container py-4">
+
+    <!-- الرسائل المنبثقة -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-{{ 'danger' if '❌' in message else 'success' }} alert-dismissible fade show rounded-pill shadow-sm mb-4" role="alert">
-            <div class="d-flex align-items-center">
-                <span class="me-2">{{ message }}</span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+          <div class="alert alert-{{ 'danger' if '❌' in message else 'success' }} alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         {% endfor %}
       {% endif %}
     {% endwith %}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary mb-0"><i class="fas fa-boxes me-2"></i> {{ store.name }}</h2>
-        <div class="d-flex align-items-center gap-3">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://www.dalelbelgium.be/store/view_products/{{ store.id }}" 
-                 alt="QR Code" class="img-thumbnail shadow-sm" style="width: 60px;">
-            <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
-                <i class="fas fa-arrow-right"></i> الرئيسية
+    <!-- عنوان المتجر وأزرار اللغة -->
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm">
+        <h2 class="fw-bold text-primary mb-0"><i class="fas fa-store me-2"></i> {{ store.name }}</h2>
+        <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-sm btn-outline-primary" onclick="setLanguage('ar')">AR</a>
+            <a href="#" class="btn btn-sm btn-outline-primary" onclick="setLanguage('nl')">NL</a>
+            <a href="#" class="btn btn-sm btn-outline-primary" onclick="setLanguage('fr')">FR</a>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fas fa-home"></i> <span data-i18n="home">الرئيسية</span>
             </a> 
         </div>
     </div>
 
+    <!-- إضافة منتج -->
     <div class="card rounded-card mb-4">
-        <div class="card-header p-3">
-            <h5 class="mb-0 fs-6"><i class="fas fa-plus-circle me-1"></i> إضافة صنف جديد</h5>
-        </div>
-        <div class="card-body p-3">
+        <div class="card-header p-3"><i class="fas fa-plus-circle me-1"></i> <span data-i18n="add_product">إضافة صنف جديد للنظام</span></div>
+        <div class="card-body p-4">
             <form action="{{ url_for('add_product', store_id=store.id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="col-md-12">
-                    <label class="form-label small fw-bold text-muted"><i class="fas fa-barcode"></i> الباركود</label>
-                    <input type="text" name="barcode" class="form-control rounded-3" placeholder="أدخل رقم الكود">
+                
+				<div class="col-md-3">
+					<label class="form-label small fw-bold" data-i18n="barcode_label">الباركود</label>
+					<input type="text" name="barcode" class="form-control rounded-3 shadow-sm" 
+						   placeholder="" data-i18n-placeholder="barcode_placeholder">
+				</div>
+				
+				
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold" data-i18n="product_name">اسم المنتج</label>
+                    <input type="text" name="product_name" class="form-control rounded-3 shadow-sm" required>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold text-muted">اسم المنتج</label>
-                    <input type="text" name="product_name" class="form-control rounded-3" required>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold" data-i18n="product_image">صورة المنتج</label>
+                    <input type="file" name="product_image" class="form-control rounded-3 shadow-sm" accept="image/*">
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small fw-bold" data-i18n="price_before">السعر الأساسي (€)</label>
+                    <input type="number" step="0.01" name="price_before" class="form-control rounded-3 shadow-sm" placeholder="0.00">
                 </div>
                 <div class="col-6 col-md-3">
-                    <label class="form-label small fw-bold text-muted">السعر (€)</label>
-                    <input type="number" step="0.01" name="price_before" class="form-control rounded-3">
+                    <label class="form-label small fw-bold text-danger" data-i18n="price_after">سعر العرض (€)</label>
+                    <input type="number" step="0.01" name="price_after" class="form-control rounded-3 border-danger shadow-sm" placeholder="0.00">
                 </div>
                 <div class="col-6 col-md-3">
-                    <label class="form-label small fw-bold text-success">سعر العرض (€)</label>
-                    <input type="number" step="0.01" name="price_after" class="form-control rounded-3 border-success">
+                    <label class="form-label small fw-bold text-muted" data-i18n="offer_start">بداية العرض</label>
+                    <input type="date" name="offer_start" class="form-control rounded-3 shadow-sm">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold text-muted">الصورة</label>
-                    <input type="file" name="product_image" class="form-control rounded-3" accept="image/*">
+                <div class="col-6 col-md-3">
+                    <label class="form-label small fw-bold text-muted" data-i18n="offer_end">نهاية العرض</label>
+                    <input type="date" name="offer_end" class="form-control rounded-3 shadow-sm">
                 </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">
-                        <i class="fas fa-save me-1"></i> حفظ المنتج
-                    </button>
+
+                <div class="col-md-9">
+					<label class="form-label small fw-bold" data-i18n="notes">ملاحظات العرض (تظهر للزبون)</label>
+					<input type="text" name="notes" class="form-control rounded-3 shadow-sm" 
+						   data-i18n-placeholder="notes_placeholder" 
+						   placeholder="مثال: عرض نهاية الأسبوع، متوفر 3 قطع لكل زبون...">
+				</div>
+
+                
+               
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold py-2 shadow"><i class="fas fa-save me-2"></i> <span data-i18n="save">حفظ الصنف</span></button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="mb-3">
-        <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white">
-            <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
-            <input type="text" id="adminSearchInput" class="form-control border-0" 
-                   placeholder="ابحث بالاسم أو الباركود..." onkeyup="adminFilterProducts()">
+    <!-- بحث سريع -->
+    <div class="mb-4">
+        <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white p-1">
+            <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted px-2"></i></span>
+            <input type="text" id="adminSearchInput" class="form-control border-0" placeholder="ابحث بسرعة باسم المنتج أو الباركود..." onkeyup="adminFilterProducts()">
         </div>
     </div>
 
-    <div class="card rounded-card border-0 overflow-hidden">
+    <!-- جدول المنتجات -->
+    <div class="card rounded-card overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 text-center">
-                <thead class="bg-light text-muted small">
-                    <tr>
-                        <th>المنتج</th>
-                        <th>السعر</th>
-                        <th>العمليات</th>
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr class="text-center">
+                        <th class="text-start" data-i18n="product_details">الصنف والتفاصيل</th>
+                        <th data-i18n="sale_price">سعر البيع</th>
+                        <th class="hide-mobile" data-i18n="offer_period">فترة العرض</th>
+                        <th data-i18n="notes">الملاحظات</th>
+                        <th data-i18n="actions">التحكم</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-center">
                     {% for product in store.products %}
                     <tr class="product-item" data-name="{{ product.name }}" data-barcode="{{ product.barcode }}">
-                        <td>
-                            <div class="d-flex align-items-center text-start">
+                        <td class="text-start">
+                            <div class="d-flex align-items-center">
                                 {% if product.image %}
-                                <img src="{{ url_for('static', filename='uploads/' + product.image) }}" width="45" height="45" class="me-2">
+                                <img src="{{ url_for('static', filename='uploads/' + product.image) }}" class="img-preview me-3">
                                 {% else %}
-                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;"><i class="fas fa-image text-muted"></i></div>
+                                <div class="bg-light rounded-3 me-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="fas fa-box text-muted"></i></div>
                                 {% endif %}
                                 <div>
-                                    <div class="fw-bold small">{{ product.name }}</div>
-                                    <div class="text-muted" style="font-size: 0.7rem;">#{{ product.barcode or 'بدون كود' }}</div>
+                                    <div class="fw-bold text-dark">{{ product.name }}</div>
+                                    <span class="info-pill"><i class="fas fa-barcode me-1"></i>{{ product.barcode or 'بدون كود' }}</span>
                                 </div>
                             </div>
                         </td>
                         <td>
                             {% if product.has_offer %}
-                                <span class="text-danger fw-bold">{{ product.price_after }}€</span>
+                                <div class="badge-price old-price-tag mb-1">{{ product.price_before }}€</div><br>
+                                <div class="badge-price new-price-tag">{{ product.price_after }}€</div>
                             {% else %}
-                                <span>{{ product.price_before }}€</span>
+                                <div class="badge-price regular-price-tag">{{ product.price_before }}€</div>
+                            {% endif %}
+                        </td>
+                        <td class="hide-mobile">
+                            {% if product.offer_end %}
+                                <div class="small text-muted"><i class="far fa-calendar-alt text-primary me-1"></i>{{ product.offer_start or 'مفتوح' }}</div>
+                                <div class="small text-danger fw-bold"><i class="fas fa-calendar-check me-1"></i>{{ product.offer_end }}</div>
+                            {% else %}
+                                <span class="text-muted small">دائم</span>
                             {% endif %}
                         </td>
                         <td>
-                            <div class="d-flex justify-content-center">
-                                <button class="btn btn-sm btn-warning btn-action rounded-circle" 
-                                        onclick="openEditModal('{{ product.id }}', '{{ product.name }}', '{{ product.price_before }}', '{{ product.price_after }}', '{{ product.barcode }}', '{{ product.has_offer }}')">
+                            <div class="notes-area mx-auto">
+                                {{ product.notes or '<span class="text-light-emphasis small">--</span>' | safe }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-sm btn-light border rounded-pill px-3 text-primary" 
+                                        onclick="openEditModal('{{ product.id }}', '{{ product.name }}', '{{ product.price_before }}', '{{ product.price_after }}', '{{ product.barcode }}', '{{ product.has_offer }}', '{{ product.offer_start }}', '{{ product.offer_end }}', '{{ product.notes }}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <form action="{{ url_for('delete_product', product_id=product.id) }}" method="POST" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-action rounded-circle" onclick="return confirm('حذف هذا المنتج نهائياً؟')">
+                                    <button type="submit" class="btn btn-sm btn-light border rounded-pill px-3 text-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -142,46 +190,61 @@
     </div>
 </div>
 
-<div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- مودال تعديل المنتج -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <form id="editProductForm" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" id="modal_csrf_token" value="{{ csrf_token() }}">
             <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 pb-0 text-center d-block">
-                    <h5 class="fw-bold mt-2">تعديل بيانات الصنف</h5>
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-light rounded-4 rounded-bottom-0">
+                    <h5 class="fw-bold mb-0" data-i18n="edit_product">تعديل بيانات الصنف</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <input type="hidden" name="product_id" id="edit_id">
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted">اسم المنتج</label>
-                        <input type="text" name="product_name" id="edit_name" class="form-control rounded-3" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted">الباركود</label>
-                        <input type="text" name="barcode" id="edit_barcode" class="form-control rounded-3">
-                    </div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label class="small fw-bold text-muted">السعر الأصلي</label>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="small fw-bold" data-i18n="product_name">اسم المنتج</label>
+                            <input type="text" name="product_name" id="edit_name" class="form-control rounded-3" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small fw-bold" data-i18n="barcode">الباركود</label>
+                            <input type="text" name="barcode" id="edit_barcode" class="form-control rounded-3">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold" data-i18n="price_before">السعر الأصلي</label>
                             <input type="number" step="0.01" name="price_before" id="edit_before" class="form-control rounded-3">
                         </div>
-                        <div class="col-6">
-                            <label class="small fw-bold text-success">سعر العرض</label>
-                            <input type="number" step="0.01" name="price_after" id="edit_after" class="form-control rounded-3 border-success">
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold text-danger" data-i18n="price_after">سعر العرض</label>
+                            <input type="number" step="0.01" name="price_after" id="edit_after" class="form-control rounded-3 border-danger">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold" data-i18n="offer_start">تاريخ البداية</label>
+                            <input type="date" name="offer_start" id="edit_start" class="form-control rounded-3">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="small fw-bold" data-i18n="offer_end">تاريخ النهاية</label>
+                            <input type="date" name="offer_end" id="edit_end" class="form-control rounded-3">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="small fw-bold" data-i18n="notes">الملاحظات</label>
+                            <input type="text" name="notes" id="edit_notes" class="form-control rounded-3">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="small fw-bold" data-i18n="product_image">تغيير الصورة (اختياري)</label>
+                            <input type="file" name="product_image" class="form-control rounded-3">
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch p-3 bg-light rounded-3">
+                                <input class="form-check-input ms-0 me-2" type="checkbox" name="has_offer" id="edit_has_offer">
+                                <label class="form-check-label fw-bold text-primary" for="edit_has_offer" data-i18n="special_offer">تفعيل كعرض خاص (سيظهر السعر المشطوب)</label>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="small fw-bold text-muted">تغيير الصورة (اختياري)</label>
-                        <input type="file" name="product_image" class="form-control rounded-3" accept="image/*">
-                    </div>
-                    <div class="form-check form-switch mb-2">
-                        <input class="form-check-input" type="checkbox" name="has_offer" id="edit_has_offer">
-                        <label class="form-check-label fw-bold small" for="edit_has_offer">تفعيل كعرض خاص</label>
-                    </div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">حفظ التغييرات</button>
+                <div class="modal-footer border-0 bg-light rounded-4 rounded-top-0">
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow" data-i18n="update">تحديث البيانات</button>
                 </div>
             </div>
         </form>
@@ -192,7 +255,8 @@
 <script>
 function adminFilterProducts() {
     let input = document.getElementById('adminSearchInput').value.toLowerCase();
-    let items = document.querySelectorAll('.product-item');
+    let items = document.querySelectorAll('.product-item'); // هنا كان الخطأ
+
     items.forEach(item => {
         let name = (item.getAttribute('data-name') || "").toLowerCase();
         let barcode = (item.getAttribute('data-barcode') || "").toLowerCase();
@@ -200,23 +264,124 @@ function adminFilterProducts() {
     });
 }
 
-function openEditModal(id, name, before, after, barcode, hasOffer) {
+function openEditModal(id, name, before, after, barcode, hasOffer, start, end, notes) {
     document.getElementById('edit_id').value = id;
     document.getElementById('edit_name').value = name;
     document.getElementById('edit_before').value = before;
     document.getElementById('edit_after').value = after;
     document.getElementById('edit_barcode').value = barcode;
-    
-    // تصحيح حالة الـ Checkbox
+    document.getElementById('edit_start').value = start !== 'None' ? start : '';
+    document.getElementById('edit_end').value = end !== 'None' ? end : '';
+    document.getElementById('edit_notes').value = notes !== 'None' ? notes : '';
     document.getElementById('edit_has_offer').checked = (hasOffer.toLowerCase() === 'true');
-
-    // مزامنة التوكن
-    const mainToken = document.querySelector('input[name="csrf_token"]').value;
-    document.getElementById('modal_csrf_token').value = mainToken;
 
     document.getElementById('editProductForm').action = "/admin/product/edit/" + id;
     new bootstrap.Modal(document.getElementById('editProductModal')).show();
 }
 </script>
+<script>
+const translations = {
+    ar: {
+        product_name: "اسم المنتج",
+        barcode_label: "الباركود",
+		home:"الرئيسية",
+        price_before: "السعر الأساسي (€)",
+        price_after: "سعر العرض (€)",
+        offer_start: "بداية العرض",
+        offer_end: "نهاية العرض",
+		product_details:"الصنف و التفاصيل",
+		sale_price:"سعر المبيع",
+		offer_period:"فترة العرض",
+		actions:"التحكم",
+        notes: "الملاحظات",
+        save: "حفظ الصنف",
+		product_image: "صورة المنتج",
+        edit_product: "تعديل بيانات الصنف",
+		notes_placeholder:"مثال: عرض نهاية الأسبوع، متوفر 3 قطع لكل زبون...",
+        update: "تحديث البيانات",
+		barcode_placeholder: "كود المنتج",
+        search: "ابحث بسرعة باسم المنتج أو الباركود..."
+		
+		
+    },
+    nl: {
+        product_name: "Productnaam",
+        barcode_label: "Barcode",
+		home:"Startpagina",
+        price_before: "Normale prijs (€)",
+		barcode_placeholder: "Barcode invoeren",
+		product_details:"Productdetail",
+		sale_price:"Verkoopprijs",
+		offer_period:"aanbiedingsperiode",
+		actions:"acties",
+        price_after: "Actieprijs (€)",
+        offer_start: "Startdatum",
+        offer_end: "Einddatum",
+        notes: "Opmerkingen",
+		notes_placeholder:"Weekendaanbieding, 3 kamers beschikbaar per klant...",
+        save: "Product opslaan",
+        edit_product: "Product bewerken",
+		product_image:"Product Afbeelding",
+        update: "Gegevens bijwerken",
+        search: "Zoek op productnaam of barcode..."
+    },
+    fr: {
+        product_name: "Nom du produit",
+        barcode_label: "Code-barres",
+		home:"Page d'accueil",
+        price_before: "Prix normal (€)",
+		barcode_placeholder: "Saisir le code-barres",
+        price_after: "Prix promotionnel (€)",
+		product_details:"Détail Produit",
+		sale_price:"Prix ​​de vente",
+		offer_period:"Période de l'offre",
+		actions:"actes",
+        offer_start: "Début de l'offre",
+        offer_end: "Fin de l'offre",
+        notes: "Remarques",
+		notes_placeholder:"Offre week-end, 3 pièces disponibles par client...",
+        save: "Enregistrer le produit",
+        edit_product: "Modifier le produit",
+		product_image:"Image Produit" ,
+        update: "Mettre à jour",
+        search: "Rechercher par nom ou code-barres..."
+    }
+};
+
+function setLanguage(lang) {
+    // ترجمة النصوص العادية
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang][key]) {
+            el.innerText = translations[lang][key];
+        }
+    });
+
+    // ترجمة placeholders لأي عنصر يحتوي على data-i18n-placeholder
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (translations[lang][key]) {
+            el.placeholder = translations[lang][key];
+        }
+    });
+
+    // تحديث input البحث إذا كان موجود
+    const searchInput = document.getElementById("adminSearchInput");
+    if (searchInput) {
+        searchInput.placeholder = translations[lang].search;
+    }
+
+    // حفظ اللغة المختارة في localStorage
+    localStorage.setItem("lang", lang);
+}
+
+// تحميل اللغة المحفوظة عند تحميل الصفحة
+document.addEventListener("DOMContentLoaded", () => {
+    const savedLang = localStorage.getItem("lang") || "ar";
+    setLanguage(savedLang);
+});
+
+</script>
+
 </body>
 </html>
