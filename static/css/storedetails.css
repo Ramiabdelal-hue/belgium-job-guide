@@ -133,12 +133,13 @@
         }
 
         /* الأصناف المشهورة (Popular Items) */
-        .popular-box {
-            background: var(--soft-gold);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid #fde68a;
-        }
+       .popular-box {
+    background: var(--soft-gold);   /* الأصفر */
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid #fde68a;
+}
+
 
         .tag-list {
             display: flex;
@@ -156,36 +157,125 @@
             border: 1px solid #fde68a;
         }
 
-        /* معرض الصور المكبّر */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 20px;
-            margin: 30px ;
-             max-height: 220px;
-             overflow-y: auto;  
-              
-        }
+      /* تحسين معرض الصور ليظهر بشكل أكبر وأوضح */
+.gallery-grid {
+    display: grid;
+    /* ثلاث أعمدة بدلاً من اثنين لجعل العرض أشمل */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 20px;
+    padding: 20px;
+    margin-top: 20px;
+    /* إلغاء التمرير الداخلي للسماح للصور بالبروز */
+    max-height: none; 
+    overflow: visible;  
+}
 
-        .gallery-img {
-            width: 100%;
-            height: 110px; /* تم تكبير الحجم */
-            object-fit: cover;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
+.gallery-img {
+    width: 50%;
+    height: 100px; /* زيادة الارتفاع بشكل ملحوظ */
+    object-fit: cover;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    border: 1px solid #fde68a;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-        .gallery-img:hover {
-            transform: scale(1.05);
-        }
+.gallery-img:hover {
+    transform: translateY(-10px) scale(1.03); /* حركة رفع للأعلى عند التمرير */
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3); /* توهج ذهبي */
+    border-color: var(--primary-gold);
+}
 
         @media (max-width: 1100px) {
             .main-content-grid {
                 grid-template-columns: 1fr;
             }
-            .gallery-grid {
-                grid-template-columns: repeat(4, 1fr);
+       
+    .gallery-img {
+        
+        width: 100%;
+    }
+                 
             }
         }
+
+/* خلفية النافذة المنبثقة */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+/* الصورة المكبرة */
+.lightbox-content {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); /* توهج ذهبي خفيف */
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.lightbox.active .lightbox-content {
+    transform: scale(1);
+}
+
+/* زر الإغلاق */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+/* الصورة المكبرة عند الضغط */
+.lightbox-content {
+    max-width: 95%; /* زيادة العرض */
+    max-height: 90vh; /* جعلها تأخذ معظم ارتفاع الشاشة */
+    border-radius: 15px;
+    border: 3px solid var(--primary-gold);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    object-fit: contain; /* لضمان عدم قص أطراف الصورة */
+}
+
+.aanbiedingen-box-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px; /* المسافة بين جدول الساعات والصندوق */
+}
+
+.aanbiedingen-box {
+    display: block;
+    background: var(--soft-gold);
+    padding: 20px 40px;
+    border-radius: 25px;
+    font-weight: 900;
+    font-size: 14 px;
+    color: #92400e;
+    text-decoration: none;
+    border: 2px solid var(--primary-gold);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+    text-align: center;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.aanbiedingen-box:hover {
+    background: var(--primary-gold);
+    color: white;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.6);
+}
+
+
