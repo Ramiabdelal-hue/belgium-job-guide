@@ -129,6 +129,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
+    store = db.relationship('Store', backref='users', lazy='joined')
 
 # ---------------- HELPERS ----------------
 def admin_required(f):
@@ -261,6 +262,8 @@ def contact():
 # ---------------- AUTH (CUSTOMER) ----------------
 @app.route("/customer-login", methods=["GET", "POST"])
 def customer_login():
+    error_message = None  # المتغير الذي سيحمل رسالة الخطأ
+
     if current_user.is_authenticated:
         return redirect(url_for('manage_products', store_id=current_user.store_id))
     
@@ -274,9 +277,9 @@ def customer_login():
             flash(f"مرحباً بك مجدداً، {user.username}!", "success")
             return redirect(url_for('manage_products', store_id=user.store_id))
         else:
-            flash("❌ بيانات الدخول غير صحيحة أو الحساب غير موجود")
+            error_message = "❌ بيانات الدخول غير صحيحة أو الحساب غير موجود"
             
-    return render_template("customer.html")
+    return render_template("customer.html", error=error_message)
 
 # ---------------- DELETE IMAGE ROUTE ----------------
 @app.route("/admin/delete-image/<int:image_id>", methods=["POST"])
@@ -583,15 +586,23 @@ def add_product(store_id):
 
 
 @app.route("/admin/store/<int:store_id>/manage")
+
 @login_required
 def manage_products(store_id):
-    if hasattr(current_user, 'store_id') and current_user.store_id:
-        if current_user.store_id != store_id:
-            flash("🚫 غير مصرح لك بدخول هذا المتجر")
-            return redirect(url_for('customer_login'))
-    
     store = Store.query.get_or_404(store_id)
-    return render_template("manageproducts.html", store=store)
+
+    # إذا كان المسؤول، يسمح له بالدخول لأي متجر
+    if session.get("admin"):
+        return render_template("manageproducts.html", store=store)
+
+    # إذا كان مستخدم عادي، فقط متجره الخاص
+    if hasattr(current_user, 'store_id') and current_user.store_id == store_id:
+        return render_template("manageproducts.html", store=store)
+
+    # إذا لم ينطبق أي شرط، منع الدخول
+    flash("🚫 غير مصرح لك بدخول هذا المتجر")
+    return redirect(url_for('customer_login'))
+
 
 @app.route("/admin/product/edit/<int:product_id>", methods=["POST"])
 @login_required
@@ -679,6 +690,59 @@ def create_customer():
         
     return render_template("create_customer.html", stores=stores)
 
+
+    class EditUserForm(FlaskForm):
+        username = StringField('اسم المستخدم', validators=[DataRequired()])
+        password = PasswordField('كلمة المرور')
+        submit = SubmitField('حفظ')
+
+
+# ---------------- ADMIN - USER MANAGEMENT ----------------
+@app.route("/admin/users")
+@admin_required
+def admin_users():
+    users = User.query.options(db.joinedload(User.store)).all()
+    return render_template("admin_users.html", users=users)
+
+@app.route("/admin/users/delete/<int:user_id>", methods=["POST"])
+@admin_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash(f"🗑️ تم حذف المستخدم {user.username} بنجاح", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"❌ خطأ أثناء الحذف: {str(e)}")
+    return redirect(url_for('admin_users'))
+
+@app.route("/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
+@admin_required
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    stores = Store.query.all()
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        store_id = request.form.get("store_id")
+
+        if username:
+            user.username = username
+        if password:
+            user.password = generate_password_hash(password)
+        if store_id:
+            user.store_id = int(store_id)
+        try:
+            db.session.commit()
+            flash(f"✅ تم تحديث بيانات المستخدم {user.username}", "success")
+            return redirect(url_for('admin_users'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"❌ خطأ أثناء التحديث: {str(e)}")
+    return render_template("edit_user.html", user=user, stores=stores)
+
+
 @app.route("/admin/product/delete/<int:product_id>", methods=["POST"])
 @login_required
 def delete_product(product_id):
@@ -710,6 +774,14 @@ with app.app_context():
             print("Admin user created successfully.")
     except Exception as e:
         print(f"Init Error: {e}")
+
+# ---------------- ERROR HANDLER لرفع الملفات الكبيرة ----------------
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    flash("❌ الملف كبير جداً، أقصى حجم مسموح هو 5MB")
+    # إعادة التوجيه للصفحة السابقة أو للوحة الإدارة
+    return redirect(request.referrer or url_for("admin_panel"))
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
