@@ -508,62 +508,76 @@ def delete_store(store_id):
 @app.route("/admin/store/<int:store_id>/add-product", methods=["POST"])
 @login_required
 def add_product(store_id):
-
-    # فحص الصلاحيات: هل هذا المتجر يخص المستخدم الحالي؟
     if current_user.store_id != store_id:
         flash("🚫 غير مصرح لك بالإضافة لهذا المتجر")
         return redirect(url_for('customer_login'))
 
     try:
-        # 1. قراءة البيانات
+        # -------- البيانات الأساسية --------
         p_name = request.form.get("product_name")
         p_barcode = request.form.get("barcode") or None
 
-        # 2. منع تكرار الاسم داخل نفس المتجر
-        existing_name = Product.query.filter_by(store_id=store_id, name=p_name).first()
-        if existing_name:
-            flash(f"❌ المنتج '{p_name}' موجود بالفعل في متجرك!")
+        # منع تكرار الاسم داخل نفس المتجر
+        if Product.query.filter_by(store_id=store_id, name=p_name).first():
+            flash(f"❌ خطأ: المنتج '{p_name}' موجود بالفعل في متجرك!")
             return redirect(url_for('manage_products', store_id=store_id))
 
-        # 3. منع تكرار الباركود على مستوى النظام
+        # منع تكرار الباركود على مستوى النظام
         if p_barcode:
             existing_barcode = Product.query.filter_by(barcode=p_barcode).first()
             if existing_barcode:
-                flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر")
+                flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر في النظام")
                 return redirect(request.referrer)
 
-        # 4. معالجة رفع الصورة
-        filename = None
-        file = request.files.get('product_image')
-        if file and allowed_file(file.filename):
-            filename = f"prod_{uuid.uuid4().hex}_{secure_filename(file.filename)}"
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        # -------- الصورة --------
+        filename = "default_product.png"
+        if 'product_image' in request.files:
+            file = request.files['product_image']
+            if file and file.filename and allowed_file(file.filename):
+                filename = f"prod_{uuid.uuid4().hex}_{secure_filename(file.filename)}"
+                file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-        # 5. تحويل تواريخ العرض
-        start_dt = datetime.strptime(request.form.get("offer_start"), '%Y-%m-%d').date() if request.form.get("offer_start") else None
-        end_dt = datetime.strptime(request.form.get("offer_end"), '%Y-%m-%d').date() if request.form.get("offer_end") else None
+        # -------- الأسعار --------
+        p_before = float(request.form.get("price_before") or 0.0)
+        p_after_raw = request.form.get("price_after")
 
-        # 6. إنشاء المنتج
+        has_offer = bool(p_after_raw)
+
+        # -------- التواريخ --------
+        offer_start_raw = request.form.get("offer_start")
+        offer_end_raw = request.form.get("offer_end")
+
+        offer_start = (
+            datetime.strptime(offer_start_raw, "%Y-%m-%d").date()
+            if offer_start_raw else None
+        )
+        offer_end = (
+            datetime.strptime(offer_end_raw, "%Y-%m-%d").date()
+            if offer_end_raw else None
+        )
+
+        # -------- إنشاء المنتج --------
         new_product = Product(
             name=p_name,
-            image=filename,
-            price_before=float(request.form.get("price_before") or 0),
-            price_after=float(request.form.get("price_after") or 0),
-            has_offer=True if request.form.get("has_offer") else False,
-            offer_start=start_dt,
-            offer_end=end_dt,
-            notes=request.form.get("notes"),
             barcode=p_barcode,
+            price_before=p_before,
+            price_after=float(p_after_raw) if has_offer else None,
+            has_offer=has_offer,
+            offer_start=offer_start,
+            offer_end=offer_end,
+            notes=request.form.get("notes"),
+            image=filename,
             store_id=store_id
         )
 
         db.session.add(new_product)
         db.session.commit()
+
         flash("✅ تم إضافة الصنف بنجاح")
 
     except Exception as e:
         db.session.rollback()
-        flash(f"❌ حدث خطأ: {str(e)}")
+        flash(f"❌ حدث خطأ تقني: {str(e)}")
 
     return redirect(url_for('manage_products', store_id=store_id))
 
@@ -584,28 +598,37 @@ def manage_products(store_id):
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     
-    # فحص صلاحية المستخدم
     if hasattr(current_user, 'store_id') and current_user.store_id:
         if current_user.store_id != product.store_id:
-            flash("🚫 غير مصرح لك")
+            flash("🚫 غير مصرح لك بالتعديل")
             return redirect(url_for('customer_login'))
 
     try:
-        # 1. تحديث البيانات النصية
         product.name = request.form.get("product_name")
         product.barcode = request.form.get("barcode") or None
+        product.price_before = float(request.form.get("price_before") or 0)
+        product.price_after = float(request.form.get("price_after") or 0)
+        product.has_offer = 'has_offer' in request.form
+        offer_start_raw = request.form.get("offer_start")
+        product.notes = request.form.get("notes") 
         
-        # 2. تحديث الأسعار (مع تحويل آمن للرقام)
-        p_before = request.form.get("price_before")
-        p_after = request.form.get("price_after")
-        product.price_before = float(p_before) if p_before and p_before.strip() else 0.0
-        product.price_after = float(p_after) if p_after and p_after.strip() else 0.0
+        offer_end_raw = request.form.get("offer_end")
+        if product.has_offer:
+            product.offer_start = datetime.strptime(offer_start_raw, "%Y-%m-%d").date() if offer_start_raw else None
+            product.offer_end = datetime.strptime(offer_end_raw, "%Y-%m-%d").date() if offer_end_raw else None
+        else:
+            product.price_after = None
+            product.offer_start = None
+            product.offer_end = None
 
-        # 3. تحديث حالة العرض (الـ Checkbox)
-        # في HTML الخاص بك الـ ID هو edit_has_offer والاسم has_offer
-        product.has_offer = True if request.form.get("has_offer") else False
 
-        # 4. معالجة الصورة
+        p_barcode = request.form.get("barcode")
+        if p_barcode:
+            existing_barcode = Product.query.filter_by(barcode=p_barcode).first()
+            if existing_barcode and existing_barcode.id != product.id:
+                flash("⚠️ هذا الباركود مسجل مسبقاً لمنتج آخر في النظام")
+                return redirect(request.referrer)
+
         if 'product_image' in request.files:
             file = request.files['product_image']
             if file and file.filename != '' and allowed_file(file.filename):
@@ -615,11 +638,9 @@ def edit_product(product_id):
 
         db.session.commit()
         flash("✅ تم تحديث بيانات الصنف بنجاح")
-        
     except Exception as e:
         db.session.rollback()
-        print(f"DEBUG ERROR: {str(e)}") # سيظهر في سجلات السيرفر
-        flash(f"❌ خطأ تقني: {str(e)}")
+        flash(f"❌ خطأ: {str(e)}")
 
     return redirect(url_for('manage_products', store_id=product.store_id))
 
@@ -693,8 +714,3 @@ with app.app_context():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
-
-
-
