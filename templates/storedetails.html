@@ -44,48 +44,40 @@
 
         <div class="main-content-grid">
             
-            <div class="info-column">
-                <section>
-                    <div class="section-title">🕒 Openingstijden </div>
-                    <div id="hours-container">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-                            {% for en_day, nl_day, ar_day in days_map %}
-                                {% set time = hours_data.get(en_day) if hours_data else None %}
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 8px 0; font-weight: 600;">{{ nl_day }}</td>
-                                    <td style="padding: 8px 0; text-align: right;">
-                                        {% if time and time.open and time.close %}
-                                            <span style="color: #28a745;">{{ time.open }} - {{ time.close }}</span>
-                                        {% else %}
-                                            <span style="color: #dc3545;">Gesloten</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
-                </section>
+		   <!-- عمود ساعات العمل -->
+		 <div class="info-column">
+			<section>
+				<div class="section-title">🕒 Openingstijden </div>
+				<div id="hours-container">
+					<table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom:0;">
+						{% for en_day, nl_day, ar_day in days_map %}
+							{% set time = hours_data.get(en_day) if hours_data else None %}
+							<tr style="border-bottom: 1px solid #eee;">
+								<td style="padding: 8px 0; font-weight: 600;">{{ nl_day }}</td>
+								<td style="padding: 8px 0; text-align: right;">
+									{% if time and time.open and time.close %}
+										<span style="color: #28a745;">{{ time.open }} - {{ time.close }}</span>
+									{% else %}
+										<span style="color: #dc3545;">Gesloten</span>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</div>
+			</section>
 
-                <section class="popular-box" style="margin-top: 20px;">
-				    <div style="margin-bottom: 15px;">
-				        <a href="{{ url_for('view_products', store_id=store.id) }}" class="btn btn-info text-white" style="display: inline-block; padding: 10px 20px; background-color: #17a2b8; color: white; border-radius: 5px; text-decoration: none;">
-				            <i class="fas fa-eye"></i> Aanbiedingen 
-				        </a>
-				    </div>
-				
-				    <div class="tag-list">
-				        {% if store.popular_items %}
-				            {% for item in store.popular_items.split(',') %}
-				                <span class="popular-tag">{{ item.strip() }}</span>
-				            {% endfor %}
-				        {% else %}
-				            <p style="font-size: 0.8rem; color: #999;">Geen extra informatie beschikbaar</p>
-				        {% endif %}
-				    </div>
-				</section>
-				
-            </div>
+				{% if store.products.count() > 0 %}
+				<div class="aanbiedingen-box-wrapper">
+					<a href="{{ url_for('view_products', store_id=store.id) }}" class="aanbiedingen-box">
+					   Lijst met artikelen en aanbiedingen 🔥
+					</a>
+				</div>
+				{% endif %}
+			</div>
 
+
+          <!-- عمود الخريطة -->
             <div class="map-wrapper">
                 <div class="map-container">
                     <iframe src="https://maps.google.com/maps?q={{ store.address|urlencode }}&t=&z=15&output=embed" width="100%" height="100%" frameborder="0"></iframe>
@@ -93,11 +85,10 @@
                 <a href="https://www.google.com/maps/search/{{ store.address|urlencode }}" target="_blank" class="directions-btn" id="txt-route">Route Plannen</a>
             </div>
 
+<!-- عمود الاتصال والصور -->
             <div class="info-column">
                 <section>
                     <div class="section-title">📞 Contact</div>
-                 
-                    
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
                         <strong style="font-size: 1.2rem;">{{ store.phone }}</strong>
                         <a href="https://wa.me/{{ store.phone }}" target="_blank">
@@ -106,27 +97,27 @@
                     </div>
                     <p style="color: #666; font-size: 0.95rem; margin: 1px 0;">📍 {{ store.address }}</p>
                 </section>
-                
-   {% if store.website %}
-                    <p style="margin: 1px 0; ">
-                        <strong>Website :</strong> 
-                        <a href="{{ store.website }}" target="_blank" style="color: #d4af37; text-decoration: none;">
-                            {{ store.website.replace('https://', '').replace('http://', '') }}
-                        </a>
-                    </p>
-                    {% endif %}
+
+                {% if store.website %}
+                <p style="margin: 1px 0;">
+                    <strong>Website :</strong> 
+                    <a href="{{ store.website }}" target="_blank" style="color: #d4af37; text-decoration: none;">
+                        {{ store.website.replace('https://', '').replace('http://', '') }}
+                    </a>
+                </p>
+                {% endif %}
+
                 <section style="margin-top: 20px;">
                     <div class="gallery-grid">
                         {% if store.images %}
                             {% for img in store.images[:6] %}
-                            <img src="{{ url_for('static', filename='uploads/' + img.filename) }}" class="gallery-img" style="cursor: zoom-in;" onclick="openLightbox(this.src)">
+                                <img src="{{ url_for('static', filename='uploads/' + img.filename) }}" class="gallery-img" style="cursor: zoom-in;" onclick="openLightbox(this.src)">
                             {% endfor %}
                         {% else %}
                             <p style="font-size: 0.8rem; color: #999;">Geen foto's beschikbaar</p>
                         {% endif %}
                     </div>
                 </section>
-				
             </div>
 
         </div>
