@@ -85,6 +85,15 @@
                     <label class="form-label small fw-bold text-danger" data-i18n="price_after">سعر العرض (€)</label>
                     <input type="number" step="0.01" name="price_after" class="form-control rounded-3 border-danger shadow-sm" placeholder="0.00">
                 </div>
+				<!-- تفعيل العرض -->
+				<div class="col-12">
+					<div class="form-check form-switch p-3 bg-light rounded-3">
+						<input class="form-check-input ms-0 me-2" type="checkbox" name="has_offer" id="new_has_offer">
+						<label class="form-check-label fw-bold text-primary" for="new_has_offer" data-i18n="special_offer">
+							تفعيل كعرض خاص (سيظهر السعر المشطوب)
+						</label>
+					</div>
+				</div>
                 <div class="col-6 col-md-3">
                     <label class="form-label small fw-bold text-muted" data-i18n="offer_start">بداية العرض</label>
                     <input type="date" name="offer_start" class="form-control rounded-3 shadow-sm">
@@ -285,6 +294,7 @@ const translations = {
         product_name: "اسم المنتج",
         barcode_label: "الباركود",
 		home:"الرئيسية",
+		special_offer:"فعّل كعرض خاص ,سيظهر السعر مشطوبًا",
         price_before: "السعر الأساسي (€)",
         price_after: "سعر العرض (€)",
         offer_start: "بداية العرض",
@@ -307,6 +317,7 @@ const translations = {
     nl: {
         product_name: "Productnaam",
         barcode_label: "Barcode",
+		special_offer:"Activeer als een speciale aanbieding ,de prijs wordt doorgestreept weergegeven",
 		home:"Startpagina",
         price_before: "Normale prijs (€)",
 		barcode_placeholder: "Barcode invoeren",
@@ -329,6 +340,7 @@ const translations = {
         product_name: "Nom du produit",
         barcode_label: "Code-barres",
 		home:"Page d'accueil",
+		special_offer:"Activez cette offre spéciale, le prix sera barré.",
         price_before: "Prix normal (€)",
 		barcode_placeholder: "Saisir le code-barres",
         price_after: "Prix promotionnel (€)",
