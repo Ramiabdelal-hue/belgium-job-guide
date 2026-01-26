@@ -8,13 +8,15 @@ const translations = {
         findUs: "Waar kunt u ons vinden?",
         popularTitle: "🌟 Waar staan we om bekend?",
         web: "Website",
-        days: ["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"]
+        aanbiedingen: "Lijst met artikelen en aanbiedingen 🔥",
+        days: ["Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag","Zondag"]
     },
     ar: { 
         back: "← رجوع",
         route: "الاتجاهات",
         hours: "أوقات العمل:",
         closed: "مغلق",
+        aanbiedingen: "قائمة المنتجات والعروض 🔥",
         findUs: "أين تجدنا؟",
         popularTitle: "🌟 ما هو أكثر شيء يشتهر به المحل؟",
         web: "الموقع الإلكتروني",
@@ -25,6 +27,7 @@ const translations = {
         route: "Itinéraire",
         hours: "Heures d'ouverture:",
         closed: "Fermé",
+        aanbiedingen: "Liste des articles et des offres 🔥",
         findUs: "Où nous trouver ?",
         popularTitle: "🌟 Pour quoi sommes-nous connus ?",
         web: "Site Web",
@@ -39,11 +42,12 @@ function setLanguage(lang) {
     const map = {
         'txt-back': translations[lang].back,
         'txt-hours-title': translations[lang].hours,
-        'txt-popular-title': translations[lang].popularTitle
+        'txt-popular-title': translations[lang].popularTitle,
+        'aanbiedingen-box': translations[lang].aanbiedingen // ترجمات صندوق العروض
     };
 
     for (const id in map) {
-        const el = document.getElementById(id);
+        const el = document.getElementById(id) || document.querySelector(`.${id}`);
         if (el) el.innerText = map[id];
     }
 
@@ -70,7 +74,7 @@ function updateHoursGrid(lang) {
 
         container.innerHTML += `
             <div class="weekly-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;">
-                <span style="font-weight:600;">${dayName}:</span>
+                <span style="font-weight:600;">${dayName}</span>
                 <span>${timeStr}</span>
             </div>`;
     });
@@ -78,22 +82,40 @@ function updateHoursGrid(lang) {
 
 // ================== LIGHTBOX ==================
 function openLightbox(src) {
-    document.getElementById('imageLightbox').style.display = 'flex';
-    document.getElementById('lightboxImg').src = src;
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    
+    lightboxImg.src = src;
+    lightbox.style.display = 'flex';
+    
+    setTimeout(() => {
+        lightbox.classList.add('active');
+    }, 10);
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.classList.remove('active');
+    setTimeout(() => {
+        lightbox.style.display = 'none';
+    }, 300);
 }
 
 // ================== INIT ==================
 document.addEventListener('DOMContentLoaded', () => {
-
     // اللغة الافتراضية
     setLanguage('nl');
 
     // ربط أزرار اللغة
-    document.querySelectorAll('.lang-btn').forEach(btn => {
+    document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
         btn.addEventListener('click', () => {
             const lang = btn.dataset.lang;
             setLanguage(lang);
         });
     });
+});
 
+// إغلاق النافذة عند الضغط على زر Escape في الكيبورد
+document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") closeLightbox();
 });
