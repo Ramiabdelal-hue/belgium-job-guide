@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ store.name }} | Details</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/storedetails.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
 </head>
 <body>
 
-{# تعريف خريطة الأيام في البداية #}
 {% set days_map = [
     ('Monday', 'Maandag', 'الاثنين'),
     ('Tuesday', 'Dinsdag', 'الثلاثاء'),
@@ -22,12 +21,18 @@
     ('Sunday', 'Zondag', 'الأحد')
 ] %}
 
-{# تحويل بيانات الساعات من نص JSON إلى قاموس بايثون #}
 {% set hours_data = store.hours | from_json %}
 
+<!-- 🔴 تمرير أوقات الدوام إلى JavaScript (الحل الجذري) -->
+<script>
+    window.storeHoursData = {{ hours_data | tojson | safe }};
+</script>
+
 <div class="luxury-wrapper">
+
     <header class="top-nav">
         <a href="{{ url_for('market') }}" class="lang-btn">← Terug</a>
+
         <div class="language-switcher">
             <a href="{{ url_for('index') }}" class="lang-btn">🏠</a>
             <button class="lang-btn" data-lang="nl">NL</button>
@@ -37,84 +42,99 @@
     </header>
 
     <div class="business-card">
+
         <div class="store-header">
             <h2>{{ store.name }}</h2>
-            <div style="width: 80px; height: 5px; background: #d4af37; margin: 15px auto; border-radius: 10px;"></div>
+            <div style="width:80px;height:5px;background:#d4af37;margin:15px auto;border-radius:10px;"></div>
         </div>
 
         <div class="main-content-grid">
-            
-		   <!-- عمود ساعات العمل -->
-		 <div class="info-column">
-			<section>
-				<div class="section-title">🕒 Openingstijden </div>
-				<div id="hours-container">
-					<table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom:0;">
-						{% for en_day, nl_day, ar_day in days_map %}
-							{% set time = hours_data.get(en_day) if hours_data else None %}
-							<tr style="border-bottom: 1px solid #eee;">
-								<td style="padding: 8px 0; font-weight: 600;">{{ nl_day }}</td>
-								<td style="padding: 8px 0; text-align: right;">
-									{% if time and time.open and time.close %}
-										<span style="color: #28a745;">{{ time.open }} - {{ time.close }}</span>
-									{% else %}
-										<span style="color: #dc3545;">Gesloten</span>
-									{% endif %}
-								</td>
-							</tr>
-						{% endfor %}
-					</table>
-				</div>
-			</section>
 
-				{% if store.products.count() > 0 %}
-				<div class="aanbiedingen-box-wrapper">
-					<a href="{{ url_for('view_products', store_id=store.id) }}" class="aanbiedingen-box">
-					   Lijst met artikelen en aanbiedingen 🔥
-					</a>
-				</div>
-				{% endif %}
-			</div>
+            <!-- 🕒 أوقات الدوام -->
+            <div class="info-column">
+                <section>
+                    <div class="section-title">🕒 Openingstijden</div>
 
+                    <div id="hours-container">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+                            {% for en_day, nl_day, ar_day in days_map %}
+                            {% set time = hours_data.get(en_day) %}
+                            <tr style="border-bottom:1px solid #eee;">
+                                <td style="padding:8px 0;font-weight:600;">{{ nl_day }}</td>
+                                <td style="padding:8px 0;text-align:right;">
+                                    {% if time and time['open'] and time['close'] %}
+                                        <span style="color:#28a745;">
+                                            {{ time['open'] }} - {{ time['close'] }}
+                                        </span>
+                                    {% else %}
+                                        <span style="color:#dc3545;">Gesloten</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </section>
 
-          <!-- عمود الخريطة -->
-            <div class="map-wrapper">
-                <div class="map-container">
-                    <iframe src="https://maps.google.com/maps?q={{ store.address|urlencode }}&t=&z=15&output=embed" width="100%" height="100%" frameborder="0"></iframe>
+                {% if store.products.count() > 0 %}
+                <div class="aanbiedingen-box-wrapper">
+                    <a href="{{ url_for('view_products', store_id=store.id) }}" class="aanbiedingen-box">
+                        Lijst met artikelen en aanbiedingen 🔥
+                    </a>
                 </div>
-                <a href="https://www.google.com/maps/search/{{ store.address|urlencode }}" target="_blank" class="directions-btn" id="txt-route">Route Plannen</a>
+                {% endif %}
             </div>
 
-<!-- عمود الاتصال والصور -->
+            <!-- 🗺️ الخريطة -->
+            <div class="map-wrapper">
+                <div class="map-container">
+                    <iframe
+                        src="https://maps.google.com/maps?q={{ store.address | urlencode }}&z=15&output=embed"
+                        width="100%" height="100%" frameborder="0">
+                    </iframe>
+                </div>
+                <a href="https://www.google.com/maps/search/{{ store.address | urlencode }}"
+                   target="_blank" class="directions-btn" id="txt-route">
+                    Route Plannen
+                </a>
+            </div>
+
+            <!-- 📞 الاتصال + الصور -->
             <div class="info-column">
                 <section>
                     <div class="section-title">📞 Contact</div>
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-                        <strong style="font-size: 1.2rem;">{{ store.phone }}</strong>
+
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <strong style="font-size:1.2rem;">{{ store.phone }}</strong>
+                        {% if store.phone %}
                         <a href="https://wa.me/{{ store.phone }}" target="_blank">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="30">
                         </a>
+                        {% endif %}
                     </div>
-                    <p style="color: #666; font-size: 0.95rem; margin: 1px 0;">📍 {{ store.address }}</p>
+
+                    <p style="color:#666;font-size:0.95rem;">📍 {{ store.address }}</p>
                 </section>
 
                 {% if store.website %}
-                <p style="margin: 1px 0;">
-                    <strong>Website :</strong> 
-                    <a href="{{ store.website }}" target="_blank" style="color: #d4af37; text-decoration: none;">
-                        {{ store.website.replace('https://', '').replace('http://', '') }}
+                <p>
+                    <strong>Website:</strong>
+                    <a href="{{ store.website }}" target="_blank" style="color:#d4af37;">
+                        {{ store.website.replace('https://','').replace('http://','') }}
                     </a>
                 </p>
                 {% endif %}
 
-                <section style="margin-top: 20px;">
+                <section style="margin-top:20px;">
                     <div class="gallery-grid">
                         {% if store.images %}
                             {% for img in store.images[:6] %}
-                                <img src="{{ url_for('static', filename='uploads/' + img.filename) }}" class="gallery-img" style="cursor: zoom-in;" onclick="openLightbox(this.src)">
+                            <img src="{{ url_for('static', filename='uploads/' + img.filename) }}"
+                                 class="gallery-img"
+                                 onclick="openLightbox(this.src)">
                             {% endfor %}
                         {% else %}
-                            <p style="font-size: 0.8rem; color: #999;">Geen foto's beschikbaar</p>
+                            <p style="font-size:0.8rem;color:#999;">Geen foto's beschikbaar</p>
                         {% endif %}
                     </div>
                 </section>
@@ -124,11 +144,14 @@
     </div>
 </div>
 
+<!-- 🔍 Lightbox -->
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
     <span class="close-btn">&times;</span>
     <img class="lightbox-content" id="lightbox-img">
 </div>
 
+<!-- ✅ JavaScript -->
 <script src="{{ url_for('static', filename='js/storedetail.js') }}" defer></script>
+
 </body>
 </html>
