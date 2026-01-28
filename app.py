@@ -168,12 +168,19 @@ def index():
 def market():
     search = request.args.get("q", "").strip()
     city = request.args.get("city", "").strip()
-    query = Store.query.filter(Store.type.in_(["market", "winkel"]))
+
+    query = Store.query.filter_by(type='winkel')
     if search:
         query = query.filter(Store.name.ilike(f"%{search}%"))
     if city:
         query = query.filter(Store.city.ilike(f"%{city}%"))
-    return render_template("market.html", stores=query.all(), search=search, city=city)
+    stores = query.order_by(Store.views.desc()).all()
+    return render_template(
+        "market.html",
+        stores=stores,
+        search=search,
+        city=city
+    )
 
 def generic_store_route(template_name, store_type):
     q = request.args.get('q', '').strip()
@@ -184,7 +191,26 @@ def generic_store_route(template_name, store_type):
 
 @app.route("/resturant")
 def resturant():
-    return generic_store_route("resturant", "resturant")
+    search = request.args.get("q", "").strip()
+    city = request.args.get("city", "").strip()
+
+    query = Store.query.filter_by(type='resturant')
+
+    if search:
+        query = query.filter(Store.name.ilike(f"%{search}%"))
+
+    if city:
+        query = query.filter(Store.city.ilike(f"%{city}%"))
+
+    stores = query.order_by(Store.views.desc()).all()
+
+    return render_template(
+        "resturant.html",
+        stores=stores,
+        search=search,
+        city=city
+    )
+
 
 @app.route("/taxi")
 def taxi():
@@ -214,13 +240,50 @@ def translate():
 def rijscholen():
     return generic_store_route("rijscholen", "rijscholen")
 
-@app.route('/doctors')
-def doctors():
-    return render_template('doctors.html') # Zorg dat dit bestand bestaat!
 
-@app.route('/dentists')
+@app.route("/doctors")
+def doctors():
+    search = request.args.get("q", "").strip()
+    city = request.args.get("city", "").strip()
+
+    query = Store.query.filter_by(type='doctors')
+
+    if search:
+        query = query.filter(Store.name.ilike(f"%{search}%"))
+
+    if city:
+        query = query.filter(Store.city.ilike(f"%{city}%"))
+
+    stores = query.order_by(Store.views.desc()).all()
+
+    return render_template(
+        "doctors.html",
+        stores=stores,
+        search=search,
+        city=city
+    )
+
+@app.route("/dentists")
 def dentists():
-    return render_template('dentists.html')
+    search = request.args.get("q", "").strip()
+    city = request.args.get("city", "").strip()
+
+    query = Store.query.filter_by(type='dentists')
+
+    if search:
+        query = query.filter(Store.name.ilike(f"%{search}%"))
+
+    if city:
+        query = query.filter(Store.city.ilike(f"%{city}%"))
+
+    stores = query.order_by(Store.views.desc()).all()
+
+    return render_template(
+        "dentists.html",
+        stores=stores,
+        search=search,
+        city=city
+    )
 
 @app.route("/werk")
 def werk():
@@ -242,9 +305,29 @@ def arabisch():
 def turkish():
     return generic_store_route("turkish", "turkish")
 
+
 @app.route("/sweet")
 def sweet():
-    return generic_store_route("sweet", "sweet")
+    search = request.args.get("q", "").strip()
+    city = request.args.get("city", "").strip()
+
+    query = Store.query.filter_by(type='sweet')
+
+    if search:
+        query = query.filter(Store.name.ilike(f"%{search}%"))
+
+    if city:
+        query = query.filter(Store.city.ilike(f"%{city}%"))
+
+    stores = query.order_by(Store.views.desc()).all()
+
+    return render_template(
+        "sweet.html",
+        stores=stores,
+        search=search,
+        city=city
+    )
+
 
 @app.route("/verblijf")
 def verblijf():
@@ -793,5 +876,6 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
