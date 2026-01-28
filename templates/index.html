@@ -27,7 +27,8 @@
     <div class="nav-links" id="menuLinks">
         <a onclick="navAction('market-section')" id="nav-market"></a>
         <a onclick="navAction('resturant-section')" id="nav-res"></a>
-        <a onclick="navAction('kappers-section')" id="nav-kappers"></a>
+        <a onclick="navAction('Dr-section')" id="nav-Dr"></a>
+		<a onclick="navAction('kappers-section')" id="nav-kappers"></a>
         <a onclick="navAction('cars-section')" id="nav-cars"></a>
         <a onclick="navAction('newcomers-section')" id="nav-newcomers"></a>
         <a href="/about" id="nav-about"></a>
@@ -53,6 +54,24 @@
         </a>
         <a href="{{ url_for('sweet') }}" style="text-decoration: none; color: inherit; display: block;">
             <div class="market-card"><span class="card-icon">🧁</span><h3 id="m-c3"></h3></div>
+        </a>
+    </div>
+</div>
+
+<div id="Dr-section" class="content-section">
+    <h2 class="section-title" id="title-Dr"></h2>
+    <div class="market-grid">
+        <a href="{{ url_for('doctors') }}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="market-card">
+                <span class="card-icon">👨‍⚕️</span>
+                <h3 id="dr-c1"></h3>
+            </div>
+        </a>
+        <a href="{{ url_for('dentists') }}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="market-card">
+                <span class="card-icon">🦷</span>
+                <h3 id="dr-c2"></h3>
+            </div>
         </a>
     </div>
 </div>
@@ -125,4 +144,3 @@
 <script src="static/js/index.js"></script>
 </body>
 </html>
-

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="nl" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winkels & Restaurants - Belgium Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/market.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="dark-theme">
+
+<div class="header-wrapper">
+    <div class="topbar">
+        <div class="search-group-container">
+            <div class="search-group">
+                <div class="search-item">
+                    <span>🔍</span>
+                    <input type="text" id="searchName" placeholder="Zoek op naam...">
+                </div>
+                <div class="divider"></div>
+                <div class="search-item">
+                    <span>📍</span>
+                    <input type="text" id="searchCity" placeholder="Stad...">
+                </div>
+            </div>
+        </div>
+
+        <div class="right-actions">
+            <div class="langs">
+                <a href="{{ url_for('index') }}" class="lang-btn home-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">🏠</a>
+                <button onclick="setLanguage('nl')" id="btn-nl" class="lang-btn">NL</button>
+                <button onclick="setLanguage('ar')" id="btn-ar" class="lang-btn">AR</button>
+                <button onclick="setLanguage('fr')" id="btn-fr" class="lang-btn">FR</button>
+            </div>
+            <div class="user-profile-circle"></div>
+        </div>
+    </div>
+</div>
+
+<div class="main-layout">
+    <div class="container-wrapper">
+        <h2 class="section-title">Featured Stores</h2>
+        <div class="container" id="storeContainer">
+            {% for store in stores if store.type == 'doctor' %}
+            <a href="{{ url_for('store_details', store_id=store.id) }}"
+               class="store-card"
+               data-name="{{ store.name|lower }}"
+               data-city="{{ store.city|lower }}"
+               data-rating="{{ store.rating or 0 }}"
+                data-lat="{{ store.lat }}"
+                  data-lng="{{ store.lng }}">
+                <div class="card-image">
+                    <span class="badge">{{ store.city or "BE" }}</span>
+                    {% if store.images %}
+                        <img src="{{ url_for('static', filename='uploads/' + store.images[0].filename) }}" class="store-img" loading="lazy">
+                    {% else %}
+                        <div class="store-img placeholder">🏪</div>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    <h3>{{ store.name }}</h3>
+                    <div class="rating-wrapper">
+                        <div class="stars"></div>
+                        <span class="rating-num"></span>
+                    </div>
+
+                    <p class="store-desc">{{ store.desc or "No description available." }}</p>
+
+                    <div class="views-badge">
+                        <span>👁️ {{ store.views or 0 }} views</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/market.js') }}"></script>
+
+</body>
+</html>
