@@ -42,7 +42,7 @@
     <div class="container-wrapper">
         <h2 class="section-title">Featured Stores</h2>
         <div class="container" id="storeContainer">
-            {% for store in stores if store.type == 'doctor' %}
+            {% for store in stores if store.type == 'doctors' %}
             <a href="{{ url_for('store_details', store_id=store.id) }}"
                class="store-card"
                data-name="{{ store.name|lower }}"
@@ -82,4 +82,5 @@
 <script src="{{ url_for('static', filename='js/market.js') }}"></script>
 
 </body>
+
 </html>
