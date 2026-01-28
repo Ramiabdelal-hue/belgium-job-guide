@@ -234,10 +234,9 @@ def arabisch():
 def turkish():
     return generic_store_route("turkish", "turkish")
 
-@app.route("/sweets")
-def sweets():
-    stores = Store.query.filter_by(category='sweets').all()
-    return render_template('sweets.html', stores=stores)
+@app.route("/sweet")
+def sweet():
+    return generic_store_route("sweet", "sweet")
 
 @app.route("/verblijf")
 def verblijf():
@@ -786,3 +785,4 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
