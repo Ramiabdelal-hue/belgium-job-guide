@@ -214,9 +214,17 @@ def translate():
 def rijscholen():
     return generic_store_route("rijscholen", "rijscholen")
 
-@app.route("/werrk")
+@app.route('/doctors')
+def doctors():
+    return render_template('doctors.html') # Zorg dat dit bestand bestaat!
+
+@app.route('/dentists')
+def dentists():
+    return render_template('dentists.html')
+
+@app.route("/werk")
 def werk():
-    return generic_store_route("werrk", "werrk")
+    return generic_store_route("werk", "werk")
 
 @app.route("/ekama")
 def ekama():
@@ -785,4 +793,5 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
