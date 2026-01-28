@@ -1,22 +1,24 @@
 const translations = {
     nl: {
-        navM: "🏪 Halal winkels", navR: "🍽️ Resto Halal", navK: "✂️ Kappers", navC: "🚗 Auto ", navN: "🇧🇪 Nieuwkomers",  navO: "✨ Over ons",
+        navM: "🏪 Halal winkels",navD: "⚕️ Docter",   navR: "🍽️ Resto Halal", navK: "✂️ Kappers", navC: "🚗 Auto ", navN: "🇧🇪 Nieuwkomers",  navO: "✨ Over ons",
         hT: "Welkom", hD: "Uw betrouwbare gids voor diensten en Halal Turks-Arabische winkels en  in België..",
         tM: "🏪 Winkels", mc1: "Supermarkten", mc2: "Slagerijen", mc3: "Halal Banketbakkers",
         tR: "🍽️ Halal Restaurants", rc1: "Arabisch", rc2: "Turks", rc3: "Andere",
         kB: "✂️ Kappers", kc1: "Arabische kappers", kc2: "Turks kappers",
         subC1: "Garage & Mechaniek", subC2: "rijscholen", subC3: "Taxi",
+       tDr: "⚕️ Medische Diensten", dr1: "Huisartsen", dr2: "Tandartsen",
         tN: "🇧🇪 Nieuwkomers", nc1: "Gemeente", nc2: "Verblijf", nc3: "Werk", nc4: "Taal", nc5: "Tips",
         ns1: "Immigratieadvocaten", ns2: "Vertaalbureaus", ns3: "Sociaal adviseurs",
         tick: "Welkom bij Dalel Belgium 🇧🇪 Ontworpen en ontwikkeld door Rami Abdelal ", 
         dir: "ltr", tO: "✨ Over ons binnenkort...", cta: "➕  Als u een winkel of dienst wilt toevoegen, klik dan hier A.U.B  ➕"
     },
     ar: {
-        navM: "🏪 محلات الحلال", navR: "🍽️ مطاعم حلال", navK: "✂️ الحلاقين", navC: "🚗 السيارات", navN: "🇧🇪 دليل الجدد", navO: "✨ معلومات عنا",
+        navM: "🏪 محلات الحلال", navD: "⚕️ دكتور", navR: "🍽️ مطاعم حلال", navK: "✂️ الحلاقين", navC: "🚗 السيارات", navN: "🇧🇪 دليل الجدد", navO: "✨ معلومات عنا",
         hT: "أهلاً وسهلاً", hD: "دليلكم الموثوق للخدمات والمحلات العربية الحلال والتركية في بلجيكا.",
         tM: "🏪 المحلات", mc1: "سوبر ماركت", mc2: "لحوم حلال", mc3: "محلات حلويات",
         tR: "🍽️ مطاعم حلال", rc1: "مطاعم عربية", rc2: "مطاعم تركية", rc3: "مطاعم متنوعة",
         kB: "✂️ الحلاقين", kc1: "حلاقين عرب", kc2: "حلاقين أتراك",
+        tDr: "⚕️ الخدمات الطبية", dr1: "طبيب عام", dr2: "طبيب أسنان",
         subC1: " ميكانيك عام", subC2: "مدارس تعليم السياقة", subC3: "تاكسي",
         tN: "🇧🇪 دليل الجدد", nc1: "البلدية", nc2: "الإقامة", nc3: "البحث عن عمل", nc4: "تعلم اللغة", nc5: "نصائح مهمة",
         ns1: "محامو الهجرة", ns2: "مكاتب الترجمة", ns3: "مستشار اجتماعي",
@@ -24,11 +26,12 @@ const translations = {
         dir: "ltr", tO: "✨ خدمات قريباً...", cta: "➕  إذا كنت ترغب في إضافة متجر أو أي خدمة، يرجى النقر هنا  ➕"
     },
     fr: {
-        navM: "🏪 Magasins", navR: "🍽️ Restaurants", navK: "✂️ Coiffeurs", navC: "🚗 auto", navN: "🇧🇪 Nouveaux",  navO: "✨ A propos de nous",
-        hT: "Bienvenue", hD: "Votre guide fiable des boutiques et services halal et turco-arabes en Belgique..",
+        navM: "🏪 Magasins",navD: "⚕️ Docteur", navR: "🍽️ Restaurants", navK: "✂️ Coiffeurs", navC: "🚗 auto", navN: "🇧🇪 Nouveaux",  navO: "✨ A propos de nous",
+        hT: "Bienvenue", hD: "Votre Dalel fiable des boutiques et services halal et turco-arabes en Belgique..",
         tM: "🏪 Magasins", mc1: "Supermarchés", mc2: "Boucheries", mc3: "Pâtisseries Halal",
         tR: "🍽️ Restaurants", rc1: "Arabes", rc2: "Turcs", rc3: "Divers",
         kB: "✂️ Coiffeurs", kc1: "Coiffeurs Arabes", kc2: "Coiffeurs Turks",
+        tDr: "⚕️ Services Médicaux", dr1: "Médecin Généraliste", dr2: "Dentistes",
         subC1: "Garage & Mécanique", subC2: "École de conduite", subC3: "Taxi",
         tN: "🇧🇪 Nouveaux", nc1: "Commune", nc2: "Séjour", nc3: "Travail", nc4: "Langue", nc5: "Conseils",
         ns1: "Avocats d'immigration", ns2: "Bureaux de traduction", ns3: "Conseillers sociaux",
@@ -62,6 +65,7 @@ function changeLang(lang) {
     // القائمة التنقل
     updateText('nav-market', d.navM); 
     updateText('nav-res', d.navR); 
+    updateText('nav-Dr', d.navD);
     updateText('nav-kappers', d.navK);
     updateText('nav-cars', d.navC); 
     updateText('nav-newcomers', d.navN); 
@@ -88,6 +92,10 @@ function changeLang(lang) {
     updateText('n-s1', d.ns1); 
     updateText('n-s2', d.ns2); 
     updateText('n-s3', d.ns3);
+
+    updateText('title-Dr', d.tDr); 
+    updateText('dr-c1', d.dr1); 
+    updateText('dr-c2', d.dr2);
 
     // تحديث حالة أزرار اللغة
     document.querySelectorAll('.langs span').forEach(s => s.classList.remove('active'));
@@ -135,3 +143,4 @@ function backToCarsMain() {
     if(mainGrid) mainGrid.style.display = 'grid';
     if(extraGrid) extraGrid.style.display = 'none';
 }
+
