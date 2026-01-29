@@ -896,7 +896,7 @@ with app.app_context():
         counter = VisitorCounter(count=250)  # إنشاء سجل جديد لو لم يوجد
         db.session.add(counter)
     else:
-        counter.count = 6211  # تعديل العدد الحالي
+        counter.count = 6212  # تعديل العدد الحالي
     db.session.commit()
     print(f"Visitor count set to {counter.count}")
 
@@ -912,6 +912,7 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
