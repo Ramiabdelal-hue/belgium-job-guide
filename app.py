@@ -131,6 +131,14 @@ class User(db.Model, UserMixin):
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
     store = db.relationship('Store', backref='users', lazy='joined')
 
+
+class VisitorCounter(db.Model):  
+    __tablename__ = "visitor_counter"
+
+    id = db.Column(db.Integer, primary_key=True)
+    count = db.Column(db.Integer, default=0, nullable=False)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+
 # ---------------- HELPERS ----------------
 def admin_required(f):
     @wraps(f)
@@ -151,6 +159,22 @@ def from_json_filter(value):
             return {}
     return {}
 
+def increment_visitor():
+    counter = VisitorCounter.query.first()
+    if not counter:
+        counter = VisitorCounter(count=1)
+        db.session.add(counter)
+    else:
+        counter.count += 1
+        counter.last_updated = datetime.utcnow()
+    db.session.commit()
+@app.route("/api/visitor-count")
+def visitor_count():
+    counter = VisitorCounter.query.first()
+    return jsonify({
+        "count": counter.count if counter else 0
+    })
+
 # ---------------- ROUTES ----------------
 
 @app.route("/admin/store/<int:store_id>/view-products")
@@ -162,6 +186,7 @@ def view_products(store_id):
 # ---------------- PUBLIC ROUTES ----------------
 @app.route("/")
 def index():
+    increment_visitor()
     return render_template("index.html")
 
 @app.route("/market")
@@ -876,6 +901,7 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
