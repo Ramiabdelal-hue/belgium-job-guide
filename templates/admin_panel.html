@@ -9,7 +9,7 @@
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --accent: #f59e0b; /* لون التميز للنجوم والمنتجات المشهورة */
+            --accent: #f59e0b;
             --bg-body: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -20,17 +20,15 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-body);
             padding: 20px;
-            direction: rtl;
             color: var(--text-main);
             line-height: 1.6;
         }
 
         .container { max-width: 1000px; margin: auto; }
-        
+
         h1 { text-align: center; margin-bottom: 30px; color: #111827; font-size: 2rem; }
         h3 { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 1.5rem; }
 
-        /* Navigation */
         .logout-link {
             color: #dc2626;
             font-weight: bold;
@@ -56,13 +54,12 @@
             font-weight: bold;
         }
 
-        /* Cards & Forms */
         .card {
             background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
             border: 1px solid #e5e7eb;
         }
 
@@ -73,7 +70,6 @@
         }
 
         label { display: block; margin-bottom: 5px; font-weight: 600; color: #374151; }
-
         input, textarea, select {
             width: 100%;
             padding: 14px;
@@ -83,22 +79,18 @@
             transition: all 0.3s;
             background: #fff;
         }
-
         input:focus, select:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
         }
-
         textarea { height: 120px; resize: vertical; }
 
-        /* Highlighted Specialty Input */
         .special-input {
             border: 2px solid #fcd34d !important;
             background: #fffbeb !important;
         }
 
-        /* Buttons */
         button {
             padding: 14px 25px;
             border: none;
@@ -108,15 +100,12 @@
             font-size: 1.1rem;
             transition: 0.2s;
         }
-
-        .btn-add { background: var(--primary); color: white; width: 100%; margin-top: 25px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4); }
+        .btn-add { background: var(--primary); color: white; width: 100%; margin-top: 25px; }
         .btn-add:hover { background: var(--primary-hover); transform: translateY(-1px); }
-
-        .btn-edit { background: var(--accent); color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; }
+        .btn-edit { background: var(--accent); color: white; padding: 8px 18px; border-radius: 8px; }
         .btn-delete { background: #dc2626; color: white; padding: 8px 18px; border-radius: 8px; }
-        .btn-security { background: #6b7280; color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; }
+        .btn-security { background: #6b7280; color: white; padding: 8px 18px; border-radius: 8px; }
 
-        /* Hours Container */
         .hours-container {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -124,42 +113,31 @@
             padding: 15px;
             margin-top: 15px;
         }
-      /* تصحيح التنسيق في ملف admin_panel.html */
-.day-row {
-    display: grid;
-    grid-template-columns: 140px 1fr 1fr;
-    gap: 20px;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #edf2f7;
-} /* تأكد من إغلاق القوس هنا */
 
-.artr-input {
-    border: 1px solid #cbd5e1 !important;
-    background: #ffffff !important;
-    color: #1e293b !important;
-    padding: 10px;
-    width: 100%;
-    border-radius: 8px;
-}
-
-/* تنسيق حقل ARTR الجديد ككتابة عادية */
-.artr-input {
-    border: 1px solid #cbd5e1 !important;
-    background: #ffffff !important;
-    color: #1e293b !important;
-}
-
-.artr-input:focus {
-    border-color: #64748b !important;
-    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
-}
+        .day-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
         }
         .day-row:hover { background: #f1f5f9; }
         .day-row:last-child { border-bottom: none; }
         .day-name { font-weight: bold; color: #1e293b; }
-        .time-group { display: flex; align-items: center; gap: 10px; }
-        .time-group span { font-size: 0.85rem; color: #64748b; }
+
+        .artr-input {
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #1e293b !important;
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        .artr-input:focus {
+            border-color: #64748b !important;
+            box-shadow: 0 0 0 3px rgba(100,116,139,0.1) !important;
+        }
 
         .copy-btn {
             background: #dcfce7; color: #166534; border: 1px dashed #22c55e;
@@ -168,7 +146,6 @@
         }
         .copy-btn:hover { background: #bbf7d0; }
 
-        /* Store Card Display */
         .store {
             background: #fff;
             border-right: 6px solid var(--primary);
@@ -177,7 +154,6 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border: 1px solid #e5e7eb;
-            border-right-width: 6px;
         }
         .popular-badge {
             display: inline-block;
@@ -198,7 +174,6 @@
             border-radius: 15px;
             border: 2px solid var(--primary);
             font-size: 1.2rem;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
 
         @media (max-width: 768px) {
@@ -209,13 +184,17 @@
 </head>
 
 <body>
-
 <div class="container">
 
+    <!-- زر تسجيل الخروج -->
     <a href="{{ url_for('admin_logout') }}" class="logout-link">تسجيل الخروج ←</a>
+	<a href="{{ url_for('create_customer') }}" class="btn btn-info text-white shadow">
+				<i class="fas fa-user-plus"></i> إنشاء حسابات للزبائن
+			</a>
 
     <h1>لوحة تحكم إدارة المتاجر</h1>
 
+    <!-- رسائل الفلاش -->
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for message in messages %}
@@ -224,18 +203,8 @@
       {% endif %}
     {% endwith %}
 
+    <!-- إضافة متجر جديد -->
     <div class="card">
-	
-		<div class="mb-4">
-			<a href="{{ url_for('create_customer') }}" class="btn btn-info text-white shadow">
-				<i class="fas fa-user-plus"></i> إنشاء حسابات للزبائن
-			</a>
-			
-			 <a href="{{ url_for('admin_users') }}" class="btn btn-info text-white shadow" style="background:#2563eb; color:white; padding:10px 20px; border-radius:10px; text-decoration:none;">
-				<i class="fas fa-users-cog"></i> إدارة المستخدمين
-			</a>
-		</div>
-	
         <h3>➕ إضافة متجر جديد للمنصة</h3>
 
         <form method="POST" action="{{ url_for('admin_panel') }}" enctype="multipart/form-data">
@@ -246,18 +215,14 @@
                     <label>اسم المتجر</label>
                     <input name="name" placeholder="مثلاً: مطعم الياسمين" required>
                 </div>
-                
-               <div>
-    <label>نوع النشاط</label>
-    <input type="text" name="type" list="activity-options" placeholder="اختر من القائمة أو اكتب نوع النشاط..." required>
-    
-    
-</div>
+                <div>
+                    <label>نوع النشاط</label>
+                    <input type="text" name="type" list="activity-options" placeholder="اختر أو اكتب..." required>
+                </div>
                 <div>
                     <label>المدينة</label>
                     <input name="city" placeholder="مثلاً: برلين" required>
                 </div>
-
                 <div>
                     <label>العنوان التفصيلي</label>
                     <input name="address" placeholder="الشارع ورقم البناء" required>
@@ -268,7 +233,6 @@
                 <div>
                     <label>رقم الهاتف</label>
                     <input name="phone" placeholder="+49 123 456789">
-        
                 </div>
                 <div>
                     <label>الموقع الإلكتروني</label>
@@ -278,25 +242,11 @@
                     <label>التقييم الحالي</label>
                     <input type="number" name="rating" min="0" max="5" step="0.1" placeholder="مثلاً: 4.5">
                 </div>
-<div style="margin-top: 20px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
-    <h4 style="margin: 0 0 10px 0; color: #475569;">🏳️ أصل أو هوية المحل (artr)</h4>
-    <input type="text" name="artr" class="artr-input" list="origin-options" placeholder="مثلاً: محل تركي، إدارة عربية، هولندي...">
-    
-    <datalist id="origin-options">
-        <option value="محل تركي">
-        <option value="مطعم سوري">
-        <option value="إدارة عربية">
-        <option value="محل هولندي">
-        <option value="إدارة مشتركة">
-    </datalist>
-    <small style="color: #64748b;">اكتب هنا جنسية المحل أو لغة الإدارة (كتابة عادية).</small>
-</div>
                 <div>
                     <label>صور المتجر</label>
                     <input type="file" name="images" multiple accept="image/*" style="padding: 10px;">
                 </div>
             </div>
-
 
             <div style="margin-top: 20px;">
                 <label>وصف المتجر</label>
@@ -304,24 +254,30 @@
             </div>
 
             <div style="margin-top: 25px; background: #fffbeb; padding: 20px; border-radius: 12px; border: 1px solid #fef3c7;">
-                <h4 style="margin: 0 0 10px 0; color: #92400e;">🌟 ما هو أكثر شيء يشتهر به المحل؟</h4>
-                <input name="popular_items" class="special-input" placeholder="مثال: شاورما دجاج، كبسة سعودية، منسف أردني (افصل بينهم بفاصلة)">
-                <small style="color: #b45309;">تظهر هذه الكلمات كعلامات تميز للمتجر في الصفحة الرئيسية.</small>
+                <h4 style="margin: 0 0 10px 0; color: #92400e;">🌟 أكثر شيء يشتهر به المحل؟</h4>
+                <input name="popular_items" class="special-input" placeholder="مثال: شاورما دجاج، كبسة سعودية">
+            </div>
+
+            <div style="margin-top: 20px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <h4>🏳️ أصل أو هوية المحل (artr)</h4>
+                <input type="text" name="artr" class="artr-input" list="origin-options" placeholder="مثلاً: محل تركي">
+                <datalist id="origin-options">
+                    <option value="محل تركي">
+                    <option value="مطعم سوري">
+                    <option value="إدارة عربية">
+                    <option value="محل هولندي">
+                    <option value="إدارة مشتركة">
+                </datalist>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 35px;">
-                <h4 style="margin: 0;">🕒 مواعيد العمل الإسبوعية</h4>
-                <button type="button" class="copy-btn" onclick="copyMondayHours()">
-                    <span>📋</span> نسخ مواعيد الاثنين للكل
-                </button>
+                <h4>🕒 مواعيد العمل الإسبوعية</h4>
+                <button type="button" class="copy-btn" onclick="copyMondayHours()">📋 نسخ مواعيد الاثنين للكل</button>
             </div>
 
             <div class="hours-container">
-                {% set days = [
-                    ('Monday', 'الاثنين'), ('Tuesday', 'الثلاثاء'), ('Wednesday', 'الأربعاء'), 
-                    ('Thursday', 'الخميس'), ('Friday', 'الجمعة'), ('Saturday', 'السبت'), ('Sunday', 'الأحد')
-                ] %}
-                
+                {% set days = [('Monday', 'الاثنين'), ('Tuesday', 'الثلاثاء'), ('Wednesday', 'الأربعاء'), 
+                               ('Thursday', 'الخميس'), ('Friday', 'الجمعة'), ('Saturday', 'السبت'), ('Sunday', 'الأحد')] %}
                 {% for eng_day, arb_day in days %}
                 <div class="day-row">
                     <span class="day-name">{{ arb_day }}</span>
@@ -341,53 +297,43 @@
         </form>
     </div>
 
+    <!-- البحث عن المتاجر -->
     <input type="text" id="searchInput" placeholder="🔍 ابحث عن أي متجر بالاسم، المدينة، أو أشهر المنتجات...">
 
+    <!-- قائمة المتاجر -->
     <div class="card">
         <h3>📂 قائمة المتاجر الحالية ({{ stores|length }})</h3>
 
         {% for store in stores %}
         <div class="store" data-search="{{ store.name }} {{ store.city }} {{ store.type }} {{ store.popular_items }}">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <strong style="font-size: 1.4rem; color: var(--primary);">{{ store.name }}</strong>
-                    
-                    {% if store.popular_items %}
-                    <br><span class="popular-badge">⭐ يشتهر بـ: {{ store.popular_items }}</span>
-                    {% endif %}
-
-                    <div style="margin-top: 10px; font-weight: 500;">
-                        📍 {{ store.city }} - {{ store.address }}
-                    </div>
-                    <div style="color: #6b7280; font-size: 0.95rem;">
-                        🏢 النوع: {{ store.type }} | 📞 الهاتف: {{ store.phone or 'غير مسجل' }}
-                    </div>
-                </div>
-            </div>
-
+            <strong style="font-size: 1.4rem; color: var(--primary);">{{ store.name }}</strong>
+            {% if store.popular_items %}
+            <br><span class="popular-badge">⭐ يشتهر بـ: {{ store.popular_items }}</span>
+            {% endif %}
+            <div>📍 {{ store.city }} - {{ store.address }}</div>
+            <div style="color: #6b7280; font-size: 0.95rem;">🏢 النوع: {{ store.type }} | 📞 الهاتف: {{ store.phone or 'غير مسجل' }}</div>
 
             <div class="actions" style="display: flex; gap: 10px; margin-top: 20px;">
-
-<a href="{{ url_for('manage_products', store_id=store.id) }}" class="btn btn-sm btn-success">
-   <i class="fas fa-plus"></i> إضافة أصناف
-</a>
-
-<a href="{{ url_for('manage_products', store_id=store.id) }}" class="btn-products" style="background: #0ea5e9; color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; display: inline-block;">
-    📦 إدارة الأصناف والعروض
-</a>
-
+                <a href="{{ url_for('manage_products', store_id=store.id) }}" style="background:#0ea5e9; color:white; padding:8px 18px; border-radius:8px; text-decoration:none;">📦 إدارة الأصناف والعروض</a>
                 <a href="{{ url_for('edit_store', store_id=store.id) }}" class="btn-edit">تعديل</a>
-                <form method="POST" action="{{ url_for('delete_store', store_id=store.id) }}"
-                      onsubmit="return confirm('هل أنت متأكد من حذف المتجر؟ لا يمكن التراجع عن هذا الإجراء.');" style="display:inline;">
+                <form method="POST" action="{{ url_for('delete_store', store_id=store.id) }}" onsubmit="return confirm('هل أنت متأكد من حذف المتجر؟');" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <button class="btn-delete" type="submit">حذف</button>
+
                 </form>
+				
+				<form method="POST" action="{{ url_for('edit_store_views', store_id=store.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="number" name="views" value="{{ store.views }}" min="0" style="width:120px;">
+    <button type="submit" class="btn-edit">تحديث</button>
+</form>
+
                 <a href="{{ url_for('change_password') }}" class="btn-security">🔒 كلمة المرور</a>
             </div>
         </div>
         {% else %}
         <div style="text-align: center; padding: 40px; color: #9ca3af;">
-            <p style="font-size: 1.2rem;">لم يتم إضافة أي متاجر بعد.</p>
+            <p>لم يتم إضافة أي متاجر بعد.</p>
         </div>
         {% endfor %}
     </div>
@@ -395,7 +341,6 @@
 </div>
 
 <script>
-// محرك البحث اللحظي
 document.getElementById("searchInput").addEventListener("input", function () {
     const term = this.value.toLowerCase();
     document.querySelectorAll(".store").forEach(store => {
@@ -404,42 +349,28 @@ document.getElementById("searchInput").addEventListener("input", function () {
     });
 });
 
-// ميزة النسخ السريع لمواعيد العمل
 function copyMondayHours() {
     const openTime = document.getElementById('Monday_open').value;
     const closeTime = document.getElementById('Monday_close').value;
-    
     if (!openTime || !closeTime) {
-        alert('من فضلك أدخل مواعيد يوم الاثنين أولاً ليتم نسخها.');
+        alert('من فضلك أدخل مواعيد يوم الاثنين أولاً.');
         return;
     }
-
-    const days = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    days.forEach(day => {
-        document.getElementById(day + '_open').value = openTime;
-        document.getElementById(day + '_close').value = closeTime;
+    ['Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(day => {
+        document.getElementById(day+'_open').value = openTime;
+        document.getElementById(day+'_close').value = closeTime;
     });
 }
 
-
 document.querySelector('form').addEventListener('submit', function(e) {
     const newName = document.querySelector('input[name="name"]').value.trim();
-    const existingStores = document.querySelectorAll('.store strong');
-    
     let isDuplicate = false;
-    
-    existingStores.forEach(store => {
-        if (store.innerText.trim() === newName) {
-            isDuplicate = true;
-        }
+    document.querySelectorAll('.store strong').forEach(store => {
+        if (store.innerText.trim() === newName) isDuplicate = true;
     });
-
-    if (isDuplicate) {
-        e.preventDefault(); // منع إرسال النموذج
-        alert('عذراً! هذا الاسم موجود بالفعل في القائمة بالأسفل.');
-    }
+    if (isDuplicate) { e.preventDefault(); alert('هذا الاسم موجود بالفعل.'); }
 });
 </script>
 
 </body>
-</html>
+</html>
