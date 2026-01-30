@@ -466,7 +466,8 @@ def admin_panel():
                 rating=float(request.form.get("rating") or 0),
                 popular_items=request.form.get("popular_items"),
                 artr=request.form.get("artr"),
-                hours=hours_data 
+                hours=hours_data,
+                views=int(request.form.get("views") or 0)  # 👁️ هنا
             )
             db.session.add(new_store)
             db.session.flush()
@@ -901,6 +902,7 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
