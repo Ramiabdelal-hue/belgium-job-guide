@@ -1,59 +1,140 @@
 <!DOCTYPE html>
-<html lang="nl" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title id="tab-title">Menu - {{ store.name }}</title>
-    <style>
-        :root { --primary-color: #0ea5e9; --discount-color: #ef4444; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f8fafc; transition: all 0.3s ease; }
-        
-        /* تنسيقات السعر */
-        .price-container { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .price-old { text-decoration: line-through; color: #94a3b8; font-size: 0.85rem; }
-        .price-new { color: var(--discount-color); font-weight: 800; font-size: 1.25rem; }
-        
-        /* شريط اللغات */
-        .lang-switch-container { overflow-x: auto; white-space: nowrap; padding: 10px 0; -webkit-overflow-scrolling: touch; }
-        .lang-btn { cursor: pointer; border-radius: 50px; padding: 8px 20px; border: 1px solid #e2e8f0; background: white; font-size: 0.9rem; transition: 0.3s; display: inline-block; font-weight: 600; }
-        .lang-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<title>Menu - {{ store.name }}</title>
 
-        /* البطاقات */
-        .product-card { border: none; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; height: 100%; background: white; }
-        .img-wrapper { position: relative; height: 180px; background: #f1f5f9; }
-        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .offer-badge { position: absolute; top: 12px; right: 12px; background: var(--discount-color); color: white; padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: bold; z-index: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+<style>
+:root {
+    --primary-color: #0ea5e9;
+    --discount-color: #ef4444;
+    --bg-light: #f8fafc;
+    --card-radius: 20px;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: var(--bg-light);
+    transition: all 0.3s ease;
+}
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        @media (max-width: 576px) {
-            .img-wrapper { height: 140px; }
-            .price-new { font-size: 1.1rem; }
-        }
-    </style>
+/* Buttons */
+.lang-btn {
+    cursor: pointer;
+    border-radius: 50px;
+    padding: 8px 18px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.lang-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Cards */
+.product-card {
+    border: none;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+}
+.img-wrapper {
+    position: relative;
+    height: 180px;
+    background: #f1f5f9;
+}
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.offer-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--discount-color);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+/* Price */
+.price-section {
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    margin-top: auto;
+    border: 1px solid #f1f5f9;
+}
+.price-new { color: var(--discount-color); font-weight: 800; font-size: 1.2rem; }
+.price-old { text-decoration: line-through; color: #94a3b8; font-size: 0.85rem; margin-right: 8px; }
+.price-regular { font-weight: 700; font-size: 1.1rem; color: #1e293b; }
+
+/* Notes */
+.product-notes {
+    font-size: 0.8rem;
+    color: #475569;
+    background: #f0f9ff;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border-right: 4px solid var(--primary-color);
+}
+
+/* Info */
+.info-row {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .img-wrapper { height: 150px; }
+    .price-new { font-size: 1rem; }
+    .price-regular { font-size: 1rem; }
+}
+</style>
 </head>
 <body>
 
 <div class="container py-3">
-    <div class="mb-3">
+    <!-- Header -->
+    <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <a href="{{ url_for('index') }}" class="lang-btn">🏠</a>
-    </div>
-
-    <div class="text-center mb-4">
-        <h2 class="fw-bold mb-3"><span class="tr" data-key="title">قائمة منتجات</span>: {{ store.name }}</h2>
-        
-        <div class="lang-switch-container no-scrollbar">
-            <div class="d-inline-flex gap-2">
-                <div class="lang-btn active" onclick="changeLang('ar', this)">العربية</div>
-                <div class="lang-btn" onclick="changeLang('nl', this)">Nederlands</div>
-                <div class="lang-btn" onclick="changeLang('fr', this)">Français</div>
-            </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="lang-btn active" onclick="changeLang('ar', this)">العربية</button>
+            <button class="lang-btn" onclick="changeLang('fr', this)">FR</button>
+            <button class="lang-btn" onclick="changeLang('nl', this)">NL</button>
         </div>
     </div>
 
+    <!-- Title -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold"><span class="tr" data-key="title">قائمة منتجات</span>: {{ store.name }}</h2>
+    </div>
+
+    <!-- Search & Filter -->
     <div class="row g-2 mb-4">
         <div class="col-8 col-md-9">
             <div class="input-group shadow-sm rounded-pill overflow-hidden border">
@@ -69,45 +150,57 @@
         </div>
     </div>
 
+    <!-- Products Grid -->
     <div class="row gx-2 gy-3 row-cols-2 row-cols-md-3 row-cols-lg-4" id="productsGrid">
         {% for product in store.products %}
-        {# تعديل مهم: حماية اسم المنتج من علامات التنصيص التي تكسر الـ HTML #}
         <div class="col product-item" data-name="{{ product.name | replace('"', '&quot;') }}" data-offer="{{ 'true' if product.has_offer else 'false' }}">
             <div class="card product-card">
                 <div class="img-wrapper">
-                    {% if product.has_offer %}
-                        <span class="offer-badge tr" data-key="badge">عرض خاص</span>
-                    {% endif %}
+                    {% if product.has_offer %}<span class="offer-badge tr" data-key="badge">عرض خاص</span>{% endif %}
                     {% if product.image %}
-                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" loading="lazy" alt="{{ product.name }}" onerror="this.onerror=null;this.src='https://placehold.co/400x400?text=No+Image';">
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" loading="lazy" alt="{{ product.name }}" onerror="this.src='https://placehold.co/400x400?text=No+Image';">
                     {% else %}
-                        <div class="d-flex h-100 align-items-center justify-content-center text-muted">
-                            <i class="fas fa-utensils fa-2x"></i>
-                        </div>
+                        <div class="h-100 d-flex align-items-center justify-content-center text-muted"><i class="fas fa-utensils fa-2x"></i></div>
                     {% endif %}
                 </div>
-                
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h6 class="card-title mb-2 fw-bold" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.5em;">
+
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title mb-2 fw-bold text-truncate" style="-webkit-line-clamp:2; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden;">
                         {{ product.name }}
                     </h6>
-                    
-                    <div class="price-container">
+
+                    <div class="price-section mt-auto">
                         {% if product.has_offer %}
-                            <span class="price-old">{{ product.price_before }}€</span>
-                            <span class="price-new">{{ product.price_after }}€</span>
+                        <div class="d-flex align-items-center">
+                            <span class="price-new">{{ "{:,.2f}".format(product.price_after) }}€</span>
+                            <span class="price-old">{{ "{:,.2f}".format(product.price_before) }}€</span>
+                        </div>
                         {% else %}
-                            <span class="fw-bold fs-5 text-dark">{{ product.price_before }}€</span>
+                        <span class="price-regular">{{ "{:,.2f}".format(product.price_before) }}€</span>
                         {% endif %}
                     </div>
 
                     {% if product.offer_end %}
-                        <div class="mt-2 pt-2 border-top" style="font-size: 0.7rem; color: #64748b;">
-                            <i class="fas fa-hourglass-half me-1"></i> 
-                            <span class="tr" data-key="expiry">تنتهي صلاحية العرض:</span> 
-                            <span class="fw-bold">{{ product.offer_end }}</span>
-                        </div>
+                    <div class="info-row mt-2">
+                        <i class="far fa-calendar-times text-danger"></i>
+                        <span class="tr" data-key="expiry">ينتهي:</span>
+                        <span class="fw-bold">{{ product.offer_end }}</span>
+                    </div>
                     {% endif %}
+
+                    {% if product.notes %}
+                    <div class="product-notes">
+                        <i class="fas fa-comment-dots me-1"></i> {{ product.notes }}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-3 d-flex gap-2 align-items-center">
+                        <input type="number" class="form-control form-control-sm" min="1" value="1" style="width:70px" id="qty-{{ product.id }}">
+                        <button class="btn btn-sm btn-primary w-100" 
+								onclick="addToCart({{ product.id }}, `{{ product.name | replace('"', '\"') }}`, {{ (product.price_after if product.has_offer else product.price_before) | float }})">
+							<i class="fas fa-cart-plus"></i> <span class="tr" data-key="add_cart">أضف للسلة</span>
+						</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,100 +209,198 @@
 
     <div id="noResults" class="text-center py-5 d-none">
         <i class="fas fa-search fa-3x text-muted mb-3"></i>
-        <p class="text-muted tr" data-key="no_results">لم يتم العثور على منتجات مطابقة.</p>
+        <p class="text-muted tr" data-key="no_results">لم يتم العثور على نتائج.</p>
+    </div>
+</div>
+
+<!-- 🛒 CART -->
+<div id="cartBox" style="
+    position:fixed; bottom:20px; left:20px;
+    width:320px; max-width:90%;
+    background:white; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.15);
+    padding:15px; z-index:9999; display:none;
+">
+    <h6 class="fw-bold mb-2">🛒 <span class="tr" data-key="cart">سلة المشتريات</span></h6>
+    <div id="cartItems" style="max-height:220px;overflow:auto"></div>
+    <hr>
+    <div class="d-flex justify-content-between fw-bold">
+        <span class="tr" data-key="total">الإجمالي</span>
+        <span id="cartTotal">0 €</span>
+    </div>
+   <button class="btn btn-success w-100 mt-2" onclick="openCheckout()"><span class="tr" data-key="checkout">تأكيد الطلب</span></button>
+
+
+</div>
+
+<!-- 📝 Checkout Modal -->
+<div id="checkoutModal" style="
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:99999;
+">
+    <div style="background:white; border-radius:16px; padding:20px; max-width:400px; width:90%;">
+        <div class="mb-2">
+            <label class="form-label"><span class="tr" data-key="name">الاسم</span></label>
+            <input type="text" id="customerName" class="form-control" placeholder="">
+        </div>
+        <div class="mb-2">
+            <label class="form-label"><span class="tr" data-key="address">العنوان</span></label>
+            <textarea id="customerAddress" class="form-control" rows="2" placeholder=""></textarea>
+        </div>
+		<div class="mb-3">
+			<label class="form-label tr" data-key="phone">الهاتف</label>
+			<input type="text" id="customerPhone" class="form-control" placeholder="">
+		</div>
+
+        <div class="text-end mt-3 d-flex justify-content-between">
+            <button class="btn btn-secondary" onclick="closeCheckout()"><span class="tr" data-key="cancel">إلغاء</span></button>
+            <button class="btn btn-success" onclick="submitOrder()"><span class="tr" data-key="confirm">تأكيد</span></button>
+        </div>
     </div>
 </div>
 
 <script>
+// 1. الإعدادات العامة
+const storeAddress = "{{ store.address }}"; 
+const deliveryRate = 0.50; 
+let cart = {};
+
 const i18n = {
-    ar: {
-        title: "قائمة منتجات",
-        search: "بحث عن منتج...",
-        all: "جميع الأصناف",
-        offers: "العروض فقط",
-        expiry: "تنتهي صلاحية العرض:",
-        badge: "عرض خاص",
-        no_results: "لا توجد نتائج للبحث حالياً."
-    },
-    nl: {
-        title: "Productlijst",
-        search: "Zoek een product...",
-        all: "Alle Producten",
-        offers: "Alleen Aanbiedingen",
-        expiry: "Aanbieding verloopt:",
-        badge: "Aanbieding",
-        no_results: "Geen producten gevonden."
-    },
-    fr: {
-        title: "Liste des produits",
-        search: "Rechercher un produit...",
-        all: "Tous les produits",
-        offers: "Offres uniquement",
-        expiry: "L'offre expire:",
-        badge: "Promotion",
-        no_results: "Aucun produit trouvé."
-    }
+    ar: { search:"بحث...", no_results:"لا توجد نتائج.", cart:"سلة المشتريات", total:"الإجمالي", checkout:"تأكيد الطلب" },
+    fr: { search:"Rechercher...", no_results:"Aucun résultat.", cart:"Panier", total:"Total", checkout:"Passer la commande" },
+    nl: { search:"Zoeken...", no_results:"Geen resultaten.", cart:"Winkelwagen", total:"Totaal", checkout:"Bestelling plaatsen" }
 };
 
+// 2. إدارة اللغة والبحث (تم تبسيطها للتأكد من العمل)
 function changeLang(lang, btn) {
-    if (!i18n[lang]) return;
-
-    // 1. تحديث شكل الأزرار
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
-
-    // 2. تحديث نصوص العناصر
-    document.querySelectorAll('.tr').forEach(el => {
-        const key = el.getAttribute('data-key');
-        if (i18n[lang][key]) {
-            el.innerText = i18n[lang][key];
-        }
-    });
-
-    // 3. تحديث Placeholder البحث
-    const searchInput = document.getElementById('searchInput');
-    if(searchInput) searchInput.placeholder = i18n[lang].search;
-
-    // 4. الاتجاه واللغة
     document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
 }
 
-function filterProducts() {
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
-    const filter = document.getElementById('filterSelect').value;
-    const items = document.getElementsByClassName('product-item');
-    const noResults = document.getElementById('noResults');
-    let visibleCount = 0;
-
-    for (let item of items) {
-        const name = item.getAttribute('data-name').toLowerCase();
-        const isOffer = item.getAttribute('data-offer') === 'true';
-        
-        const matchesSearch = name.includes(input);
-        const matchesFilter = (filter === 'all') || (filter === 'offers' && isOffer);
-
-        if (matchesSearch && matchesFilter) {
-            item.style.display = "";
-            visibleCount++;
-        } else {
-            item.style.display = "none";
-        }
-    }
-
-    if (visibleCount === 0) {
-        noResults.classList.remove('d-none');
+// 3. وظائف السلة (إصلاح addToCart)
+function addToCart(id, name, price) {
+    const qtyInput = document.getElementById(`qty-${id}`);
+    const qty = parseInt(qtyInput.value) || 1;
+    
+    if(!cart[id]) {
+        cart[id] = { name: name, price: parseFloat(price), qty: qty };
     } else {
-        noResults.classList.add('d-none');
+        cart[id].qty += qty;
     }
+    qtyInput.value = 1;
+    renderCart();
 }
 
-// التشغيل الافتراضي عند التحميل
-document.addEventListener('DOMContentLoaded', () => {
-    // التأكد من تطبيق اللغة العربية فوراً
-    changeLang('ar', document.querySelector('.lang-btn[onclick*="ar"]'));
+function removeFromCart(id) {
+    delete cart[id];
+    renderCart();
+}
+
+function renderCart() {
+    const cartBox = document.getElementById("cartBox");
+    const itemsBox = document.getElementById("cartItems");
+    const totalBox = document.getElementById("cartTotal");
+
+    itemsBox.innerHTML = "";
+    let total = 0;
+
+    for (let id in cart) {
+        const item = cart[id];
+        total += item.price * item.qty;
+        itemsBox.innerHTML += `
+            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+                <div>
+                    <div class="fw-bold text-dark">${item.name}</div>
+                    <small class="text-muted">${item.qty} × ${item.price.toFixed(2)}€</small>
+                </div>
+                <button class="btn btn-sm text-danger border-0" onclick="removeFromCart(${id})">✕</button>
+            </div>`;
+    }
+    totalBox.innerText = total.toFixed(2) + " €";
+    cartBox.style.display = total > 0 ? "block" : "none";
+}
+
+function openCheckout() {
+    document.getElementById('checkoutModal').style.display = 'flex';
+}
+
+function closeCheckout() {
+    document.getElementById('checkoutModal').style.display = 'none';
+}
+
+// 5. دالة تأكيد الطلب المضمونة (submitOrder)
+function submitOrder() {
+    const name = document.getElementById('customerName').value.trim();
+    const address = document.getElementById('customerAddress').value.trim();
+    const phone = document.getElementById('customerPhone').value.trim();
+    
+    if(!name || !address || !phone) {
+        alert("الرجاء إدخال كافة البيانات");
+        return;
+    }
+
+    let subtotal = 0;
+    for(let id in cart) { subtotal += cart[id].price * cart[id].qty; }
+
+    // التحقق من وجود مكتبة جوجل قبل البدء
+    if (typeof google === 'undefined' || !google.maps) {
+        console.error("مكتبة Google Maps لم يتم تحميلها.");
+        processFinalOrder(subtotal, 2.50, name, address, phone); // شحن ثابت إذا تعطلت الخرائط
+        return;
+    }
+
+    const service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix({
+        origins: [storeAddress],
+        destinations: [address],
+        travelMode: google.maps.TravelMode.DRIVING,
+    }, (response, status) => {
+        let deliveryCost = 2.50; // سعر افتراضي
+        
+        if (status === "OK" && response.rows[0].elements[0].status === "OK") {
+            const distanceKm = response.rows[0].elements[0].distance.value / 1000;
+            deliveryCost = distanceKm * deliveryRate;
+        }
+        
+        processFinalOrder(subtotal, deliveryCost, name, address, phone);
+    });
+}
+
+// وظيفة الإرسال النهائية للسيرفر
+function processFinalOrder(subtotal, deliveryCost, name, address, phone) {
+    const finalTotal = subtotal + deliveryCost;
+    const orderData = {
+        customer: { name, address, phone },
+        cart: cart,
+        delivery_cost: deliveryCost.toFixed(2),
+        total: finalTotal.toFixed(2)
+    };
+
+    fetch('/submit_order', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': "{{ csrf_token() if csrf_token else '' }}" 
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            alert(`✅ تم طلبك بنجاح!\nالتوصيل: ${deliveryCost.toFixed(2)}€\nالمجموع: ${finalTotal.toFixed(2)}€`);
+            location.reload(); // إعادة تحميل الصفحة لتنظيف كل شيء
+        }
+    })
+    .catch(err => alert("حدث خطأ في الاتصال بالسيرفر"));
+}
+
+document.addEventListener('DOMContentLoaded', () => { 
+    if(document.querySelector('.lang-btn.active')) {
+        changeLang('ar', document.querySelector('.lang-btn.active'));
+    }
 });
 </script>
-
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 </body>
 </html>
