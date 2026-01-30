@@ -241,6 +241,17 @@ def resturant():
 def taxi():
     return generic_store_route("taxi", "taxi")
 
+
+@app.route("/admin/store/<int:store_id>/views", methods=["POST"])
+@admin_required
+def edit_store_views(store_id):
+    store = Store.query.get_or_404(store_id)
+    store.views = int(request.form.get("views", store.views))
+    db.session.commit()
+    flash("✅ تم تحديث عدد المشاهدات")
+    return redirect(url_for("admin_panel"))
+
+
 @app.route("/slag")
 def slag():
     return generic_store_route("slag", "slag")
@@ -902,6 +913,7 @@ def request_entity_too_large(error):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
