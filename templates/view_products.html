@@ -400,6 +400,34 @@ document.addEventListener('DOMContentLoaded', () => {
         changeLang('ar', document.querySelector('.lang-btn.active'));
     }
 });
+
+function filterProducts() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const filterValue = document.getElementById("filterSelect").value;
+
+    const products = document.querySelectorAll(".product-item");
+    let visibleCount = 0;
+
+    products.forEach(product => {
+        const name = product.getAttribute("data-name").toLowerCase();
+        const hasOffer = product.getAttribute("data-offer") === "true";
+
+        let matchesSearch = name.includes(searchValue);
+        let matchesFilter = (filterValue === "all") || 
+                            (filterValue === "offers" && hasOffer);
+
+        if (matchesSearch && matchesFilter) {
+            product.style.display = "block";
+            visibleCount++;
+        } else {
+            product.style.display = "none";
+        }
+    });
+
+    // إظهار رسالة "لا توجد نتائج"
+    document.getElementById("noResults").classList.toggle("d-none", visibleCount > 0);
+}
+
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 </body>
