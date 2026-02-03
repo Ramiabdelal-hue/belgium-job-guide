@@ -7,19 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #ffcc00; --red: #fd0000; --black: #000000; --bg: #f4f4f4; }
-        body {
-            font-family: 'Poppins', 'Cairo', sans-serif;
-            background: var(--bg);
-            margin: 0;
-            padding: 20px;
+        
+        body { 
+            font-family: 'Poppins', 'Cairo', sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding: 20px; 
             transition: all 0.3s ease;
         }
+
         .lang-switcher {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
         }
+
         .lang-btn {
             padding: 8px 15px;
             border: 2px solid var(--black);
@@ -29,37 +32,43 @@
             font-weight: bold;
             transition: 0.3s;
         }
+
         .lang-btn.active {
             background: var(--gold);
             border-color: var(--gold);
         }
-        .form-container {
-            max-width: 600px;
-            background: white;
-            margin: auto;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        .form-container { 
+            max-width: 600px; 
+            background: white; 
+            margin: auto; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
             border-top: 8px solid var(--black);
             border-bottom: 8px solid var(--red);
         }
+
         h2 { text-align: center; color: var(--black); margin-bottom: 10px; }
-        .promo-text {
-            text-align: center;
-            color: var(--red);
-            font-weight: bold;
-            margin-bottom: 20px;
+        .promo-text { 
+            text-align: center; 
+            color: var(--red); 
+            font-weight: bold; 
+            margin-bottom: 20px; 
             font-size: 1.1rem;
         }
+
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
         }
+
+        /* تنسيق ساعات العمل الجديد */
         .work-hours-container {
             background: #fdfdfd;
             border: 1px solid #eee;
@@ -77,5 +86,214 @@
         .day-name { flex: 1; font-weight: 500; font-size: 0.9rem; }
         .time-inputs { flex: 2; display: flex; gap: 5px; }
         .time-inputs input { padding: 5px; font-size: 0.8rem; }
-        .btn-submit {
-            width: 1
+
+        .btn-submit { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--black); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            font-weight: bold;
+        }
+
+        .btn-submit:hover { background: var(--gold); color: var(--black); }
+        .back-home { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #666; }
+        
+        [dir="ltr"] .form-group { text-align: left; }
+        [dir="rtl"] .form-group { text-align: right; }
+        [dir="rtl"] .hour-row { flex-direction: row; }
+	
+    </style>
+</head>
+<body>
+
+<div class="lang-switcher">
+    <button class="lang-btn" onclick="setLanguage('ar')">AR</button>
+    <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
+    <button class="lang-btn" onclick="setLanguage('nl')" id="btn-nl">NL</button>
+</div>
+
+<div class="form-container">
+    <h2 id="main-h2">Lidmaatschapsaanvraag</h2>
+    <p class="promo-text" id="promo-msg">U kunt zich op elk moment en op elk tijdstip bij ons aansluiten!</p>
+	
+    <p style="text-align: center; color: #666; margin-bottom: 25px;" id="sub-text">Vul uw gegevens in, we activeren uw winkel binnen 24 uur.</p>
+		<p style="text-align: center; color: #006600; font-weight: bold; margin-bottom: 20px;" id="subscription-msg">
+    هناك رسم اشتراك بسيط شهري مع فترة مجانية
+		</p>
+    
+    <form action="{{ url_for('join_us') }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="form-group">
+            <label id="lbl-name">Naam van de winkel</label>
+            <input type="text" name="name" required placeholder="">
+        </div>
+
+        <div class="form-group">
+			<label id="lbl-type">Type activiteit</label>
+			<input type="text" name="type" id="input-type" required placeholder="">
+		</div>
+
+
+        <div class="form-group">
+            <label id="lbl-city">Stad</label>
+            <input type="text" name="city" required>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-address">Volledig adres</label>
+            <input type="text" name="address" required>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-hours">Openingstijden</label>
+            <div class="work-hours-container" id="hours-list">
+                </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-phone">Telefoonnummer</label>
+            <input type="tel" name="phone" required placeholder="04xxxxxxxx">
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-logo">Winkellogo</label>
+            <div>
+                    <label>صور المتجر</label>
+                    <input type="file" name="images" multiple accept="image/*" style="padding: 10px;">
+                </div>
+            <small id="logo-hint">Vierkant PNG- of JPG-formaat aanbevolen</small>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-text">Aanvraag indienen</button>
+    </form>
+    
+    <a href="/" class="back-home" id="lnk-home">🏠 Terug naar home</a>
+</div>
+
+<script>
+    const translations = {
+        nl: {
+            dir: "ltr",
+            title: "Word lid | Belgium Guide",
+            h2: "Lidmaatschapsaanvraag",
+            promo: "U kunt zich op elk moment en op elk tijdstip bij ons aansluiten!",
+            sub: "Vul uw gegevens in, we activeren uw winkel binnen 24 uur.",
+            name: "Naam van de winkel",
+			subscription: "Er is een kleine maandelijkse bijdrage met een gratis proefperiode",
+            type: "Type Werk",
+            city: "Stad",
+            address: "Volledig adres",
+            hours: "Openingstijden",
+            phone: "Telefoonnummer",
+            logo: "Winkellogo",
+            hint: "Vierkant PNG- of JPG-formaat aanbevolen",
+            btn: "Aanvraag indienen",
+            home: "🏠 Terug naar home",
+            types: ["Restaurant", "Supermarkt", "Slagerij", "Garage / Mechaniek", "Kapper", "Advocaat"],
+            days: ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag"]
+        },
+        ar: {
+            dir: "rtl",
+            title: "انضم إلينا | Belgium Guide",
+            h2: "طلب انضمام محل جديد",
+            promo: "يمكنك الانضمام إلينا في أي لحظة وفي أي وقت!",
+            sub: "أدخل معلومات محلك وسنقوم بمراجعتها وتفعيلها خلال 24 ساعة.",
+            name: "اسم المحل",
+			subscription: "هناك رسم اشتراك بسيط شهري مع فترة مجانية",
+            type: "نوع العمل",
+            city: "المدينة",
+            address: "العنوان الكامل",
+            hours: "ساعات العمل",
+            phone: "رقم الهاتف",
+            logo: "شعار المحل (Logo)",
+            hint: "يفضل أن تكون الصورة مربعة وبصيغة PNG أو JPG",
+            btn: "إرسال الطلب للمراجعة",
+            home: "🏠 العودة للرئيسية",
+            types: ["مطعم", "سوبر ماركت", "ملحمة", "ميكانيك / كراج", "حلاق", "محامي"],
+            days: ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"]
+        },
+        fr: {
+            dir: "ltr",
+            title: "Rejoignez-nous | Belgium Guide",
+            h2: "Demande d'adhésion",
+            promo: "Vous pouvez nous rejoindre à tout moment et à n'importe quel moment !",
+            sub: "Entrez les infos de votre magasin, nous l'activerons sous 24h.",
+            name: "Nom du magasin",
+            type: "Type de travail",
+			subscription: "Il y a un petit abonnement mensuel avec une période d'essai gratuite",
+            city: "Ville",
+            address: "Adresse complète",
+            hours: "Heures d'ouverture",
+            phone: "Numéro de téléphone",
+            logo: "Logo du magasin",
+            hint: "Format carré PNG ou JPG recommandé",
+            btn: "Envoyer la demande",
+            home: "🏠 Retour à l'accueil",
+            types: ["Restaurant", "Supermarché", "Boucherie", "Garage / Mécanique", "Coiffeur", "Avocat"],
+            days: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        }
+    };
+
+    function setLanguage(lang) {
+        const data = translations[lang];
+        document.documentElement.lang = lang;
+        document.documentElement.dir = data.dir;
+
+        document.getElementById('page-title').innerText = data.title;
+        document.getElementById('main-h2').innerText = data.h2;
+        document.getElementById('promo-msg').innerText = data.promo;
+		document.getElementById('subscription-msg').innerText = data.subscription;
+        document.getElementById('sub-text').innerText = data.sub;
+        document.getElementById('lbl-name').innerText = data.name;
+        document.getElementById('lbl-type').innerText = data.type;
+        document.getElementById('lbl-city').innerText = data.city;
+        document.getElementById('lbl-address').innerText = data.address;
+        document.getElementById('lbl-hours').innerText = data.hours;
+        document.getElementById('lbl-phone').innerText = data.phone;
+        document.getElementById('lbl-logo').innerText = data.logo;
+        document.getElementById('logo-hint').innerText = data.hint;
+        document.getElementById('btn-text').innerText = data.btn;
+        document.getElementById('lnk-home').innerText = data.home;
+
+        // تحديث أيام العمل
+        const hoursList = document.getElementById('hours-list');
+        hoursList.innerHTML = "";
+        data.days.forEach(day => {
+            hoursList.innerHTML += `
+                <div class="hour-row">
+                    <span class="day-name">${day}</span>
+                    <div class="time-inputs">
+                        <input type="time" name="open_${day}" value="09:00">
+                        <input type="time" name="close_${day}" value="18:00">
+                    </div>
+                </div>
+            `;
+        });
+
+        const select = document.getElementById('select-type');
+        select.innerHTML = "";
+        const values = ["resturant", "winkel", "slag", "garag", "barber", "lawyer"];
+        data.types.forEach((text, index) => {
+            let opt = document.createElement('option');
+            opt.value = values[index];
+            opt.innerHTML = text;
+            select.appendChild(opt);
+        });
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.innerText === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+
+    window.onload = () => setLanguage('nl');
+</script>
+
+</body>
+</html>
