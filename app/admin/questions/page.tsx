@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useLang } from "@/context/LangContext";
 import adminTranslations from "@/locales/admin.json";
+import FileUploader from "@/components/FileUploader";
 
 interface Question {
   id: number;
@@ -54,8 +55,8 @@ export default function AdminQuestionsPage() {
     answer2: "",
     answer3: "",
     correctAnswer: 0,
-    videos: [] as File[],
-    audio: null as File | null,
+    videoUrls: [] as string[],
+    audioUrl: "",
   });
 
   const lessonsMap: Record<string, any> = {
@@ -406,33 +407,6 @@ export default function AdminQuestionsPage() {
       }
     }
 
-    const formData = new FormData();
-    formData.append("lessonId", lessonId);
-    
-    if (questionType === "Examen") {
-      // للامتحانات: حفظ في ExamQuestion
-      formData.append("textNL", newQuestion.textNL);
-      formData.append("answer1", newQuestion.answer1);
-      formData.append("answer2", newQuestion.answer2);
-      formData.append("answer3", newQuestion.answer3);
-      formData.append("correctAnswer", newQuestion.correctAnswer.toString());
-    } else {
-      // للدروس و Praktijk: حفظ في Question أو PraktijkQuestion
-      formData.append("text", newQuestion.textNL || newQuestion.textFR || newQuestion.textAR || "");
-      formData.append("textNL", newQuestion.textNL);
-      formData.append("textFR", newQuestion.textFR);
-      formData.append("textAR", newQuestion.textAR);
-      formData.append("explanationNL", newQuestion.explanationNL);
-      formData.append("explanationFR", newQuestion.explanationFR);
-      formData.append("explanationAR", newQuestion.explanationAR);
-    }
-
-    newQuestion.videos.forEach(video => {
-      formData.append("videos", video);
-    });
-
-    if (newQuestion.audio) formData.append("audio", newQuestion.audio);
-
     try {
       // استخدام API المناسب
       let apiUrl = '';
@@ -443,10 +417,37 @@ export default function AdminQuestionsPage() {
       } else {
         apiUrl = "/api/questions";
       }
+
+      const payload: any = {
+        lessonId: parseInt(lessonId),
+      };
+      
+      if (questionType === "Examen") {
+        // للامتحانات: حفظ في ExamQuestion
+        payload.textNL = newQuestion.textNL;
+        payload.answer1 = newQuestion.answer1;
+        payload.answer2 = newQuestion.answer2;
+        payload.answer3 = newQuestion.answer3;
+        payload.correctAnswer = newQuestion.correctAnswer;
+        payload.videoUrls = newQuestion.videoUrls;
+        payload.audioUrl = newQuestion.audioUrl;
+      } else {
+        // للدروس و Praktijk: حفظ في Question أو PraktijkQuestion
+        payload.text = newQuestion.textNL || newQuestion.textFR || newQuestion.textAR || "";
+        payload.textNL = newQuestion.textNL;
+        payload.textFR = newQuestion.textFR;
+        payload.textAR = newQuestion.textAR;
+        payload.explanationNL = newQuestion.explanationNL;
+        payload.explanationFR = newQuestion.explanationFR;
+        payload.explanationAR = newQuestion.explanationAR;
+        payload.videoUrls = newQuestion.videoUrls;
+        payload.audioUrl = newQuestion.audioUrl;
+      }
       
       const res = await fetch(apiUrl, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       console.log("📡 Response status:", res.status);
@@ -477,6 +478,16 @@ export default function AdminQuestionsPage() {
         textNL: "",
         textFR: "",
         textAR: "",
+        explanationNL: "",
+        explanationFR: "",
+        explanationAR: "",
+        answer1: "",
+        answer2: "",
+        answer3: "",
+        correctAnswer: 0,
+        videoUrls: [],
+        audioUrl: "",
+      });
         explanationNL: "",
         explanationFR: "",
         explanationAR: "",
@@ -997,44 +1008,85 @@ export default function AdminQuestionsPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                     الفيديوهات (يمكن اختيار أكثر من فيديو)
+                    📹 رفع فيديو
                   </label>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    multiple
-                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none transition"
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files || []);
-                      setNewQuestion({ ...newQuestion, videos: files });
+                  <FileUploader
+                    type="video"
+                    onUploadComplete={(url, publicId) => {
+                      setNewQuestion({
+                        ...newQuestion,
+                        videoUrls: [...newQuestion.videoUrls, url],
+                      });
                     }}
+                    maxSizeMB={100}
                   />
-                  {newQuestion.videos.length > 0 && (
-                    <p className="text-sm text-green-600 mt-2 font-medium">
-                       تم اختيار {newQuestion.videos.length} فيديو
-                    </p>
+                  {newQuestion.videoUrls.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-sm text-green-600 font-medium mb-2">
+                        ✅ تم رفع {newQuestion.videoUrls.length} فيديو
+                      </p>
+                      <div className="space-y-2">
+                        {newQuestion.videoUrls.map((url, idx) => (
+                          <div key={idx} className="flex items-center gap-2 bg-green-50 p-2 rounded-lg">
+                            <video src={url} className="w-20 h-14 object-cover rounded" />
+                            <span className="text-xs text-gray-600 flex-1">فيديو {idx + 1}</span>
+                            <button
+                              onClick={() => {
+                                setNewQuestion({
+                                  ...newQuestion,
+                                  videoUrls: newQuestion.videoUrls.filter((_, i) => i !== idx),
+                                });
+                              }}
+                              className="text-red-500 hover:text-red-700 font-bold"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2"> ملف صوتي</label>
-                  <input
-                    type="file"
-                    accept="audio/*"
-                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none transition"
-                    onChange={(e) =>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    🎵 رفع ملف صوتي
+                  </label>
+                  <FileUploader
+                    type="audio"
+                    onUploadComplete={(url, publicId) => {
                       setNewQuestion({
                         ...newQuestion,
-                        audio: e.target.files?.[0] || null,
-                      })
-                    }
+                        audioUrl: url,
+                      });
+                    }}
+                    maxSizeMB={10}
                   />
+                  {newQuestion.audioUrl && (
+                    <div className="mt-3">
+                      <p className="text-sm text-green-600 font-medium mb-2">✅ تم رفع الملف الصوتي</p>
+                      <div className="bg-green-50 p-3 rounded-lg">
+                        <audio src={newQuestion.audioUrl} controls className="w-full" />
+                        <button
+                          onClick={() => {
+                            setNewQuestion({
+                              ...newQuestion,
+                              audioUrl: "",
+                            });
+                          }}
+                          className="mt-2 text-red-500 hover:text-red-700 text-sm font-medium"
+                        >
+                          حذف الملف الصوتي
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <button
                 className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-lg font-bold text-lg hover:from-green-600 hover:to-green-700 transition shadow-lg"
                 onClick={handleAddQuestion}
               >
-                 حفظ السؤال
+                💾 حفظ السؤال
               </button>
             </div>
           </div>

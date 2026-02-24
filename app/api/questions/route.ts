@@ -126,29 +126,33 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     console.log("📥 Received POST request");
-    const formData = await request.formData();
+    const body = await request.json();
     
-    const lessonId = formData.get("lessonId") as string;
-    const text = formData.get("text") as string;
-    const textNL = formData.get("textNL") as string;
-    const textFR = formData.get("textFR") as string;
-    const textAR = formData.get("textAR") as string;
-    const videos = formData.getAll("videos") as File[];
-    const audio = formData.get("audio") as File | null;
-    const explanationNL = formData.get("explanationNL") as string;
-    const explanationFR = formData.get("explanationFR") as string;
-    const explanationAR = formData.get("explanationAR") as string;
-    const answer1 = formData.get("answer1") as string;
-    const answer2 = formData.get("answer2") as string;
-    const answer3 = formData.get("answer3") as string;
-    const correctAnswer = formData.get("correctAnswer") ? parseInt(formData.get("correctAnswer") as string) : null;
+    const {
+      lessonId,
+      text,
+      textNL,
+      textFR,
+      textAR,
+      videoUrls = [],
+      audioUrl = "",
+      explanationNL,
+      explanationFR,
+      explanationAR,
+      answer1,
+      answer2,
+      answer3,
+      correctAnswer
+    } = body;
 
-    console.log("📋 Form data received:", {
+    console.log("📋 Data received:", {
       lessonId,
       hasText: !!text,
       hasTextNL: !!textNL,
       hasTextFR: !!textFR,
       hasTextAR: !!textAR,
+      videoCount: videoUrls.length,
+      hasAudio: !!audioUrl,
       hasExplanationNL: !!explanationNL,
       hasExplanationFR: !!explanationFR,
       hasExplanationAR: !!explanationAR,
@@ -174,7 +178,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const lessonIdNum = parseInt(lessonId);
+    const lessonIdNum = typeof lessonId === 'string' ? parseInt(lessonId) : lessonId;
     
     // Determine category from lessonId
     const category = await getCategoryFromLessonId(lessonIdNum);
@@ -188,38 +192,6 @@ export async function POST(request: NextRequest) {
 
     console.log(`💾 Creating question for category ${category}`);
 
-    // حفظ الفيديوهات
-    const videoUrls: string[] = [];
-    const uploadDir = join(process.cwd(), "public", "uploads");
-    
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    for (const video of videos) {
-      if (video && video.size > 0) {
-        const bytes = await video.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const filename = `${Date.now()}-${video.name.replace(/\s/g, '_')}`;
-        const filepath = join(uploadDir, filename);
-        
-        await writeFile(filepath, buffer);
-        videoUrls.push(`/uploads/${filename}`);
-      }
-    }
-
-    // حفظ الملف الصوتي
-    let audioUrl: string | null = null;
-    if (audio && audio.size > 0) {
-      const bytes = await audio.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${audio.name.replace(/\s/g, '_')}`;
-      const filepath = join(uploadDir, filename);
-      
-      await writeFile(filepath, buffer);
-      audioUrl = `/uploads/${filename}`;
-    }
-
     // إنشاء السؤال في الجدول المناسب
     let question;
     const questionData = {
@@ -228,14 +200,14 @@ export async function POST(request: NextRequest) {
       textFR: textFR || null,
       textAR: textAR || null,
       videoUrls: videoUrls,
-      audioUrl: audioUrl,
+      audioUrl: audioUrl || null,
       explanationNL: explanationNL || null,
       explanationFR: explanationFR || null,
       explanationAR: explanationAR || null,
       answer1: answer1 || null,
       answer2: answer2 || null,
       answer3: answer3 || null,
-      correctAnswer: correctAnswer,
+      correctAnswer: correctAnswer || null,
       lessonId: lessonIdNum
     };
 
