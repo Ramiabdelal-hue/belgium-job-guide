@@ -521,10 +521,10 @@ function LessonViewContent() {
               </div>
             </div>
 
-            {/* Images - في الأول */}
-            {currentQuestion.imageUrls && currentQuestion.imageUrls.length > 0 && (
+            {/* Images/Videos - في الأول */}
+            {currentQuestion.videoUrls && currentQuestion.videoUrls.length > 0 && (
               <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {currentQuestion.imageUrls.map((url, idx) => (
+                {currentQuestion.videoUrls.map((url, idx) => (
                   <img
                     key={idx}
                     src={url}

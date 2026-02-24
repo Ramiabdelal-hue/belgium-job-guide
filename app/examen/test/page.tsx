@@ -11,7 +11,7 @@ import Navbar from "@/components/Navbar";
 interface Question {
   id: number;
   text: string;
-  imageUrls?: string[];
+  videoUrls?: string[];
   audioUrl?: string;
   answer1?: string;
   answer2?: string;
@@ -144,7 +144,7 @@ function ExamenTestContent() {
     const answersData = questions.map((q) => ({
       questionId: q.id,
       questionText: q.text,
-      imageUrls: q.imageUrls || [],
+      videoUrls: q.videoUrls || [],
       audioUrl: q.audioUrl || null,
       answer1: q.answer1,
       answer2: q.answer2,
@@ -383,9 +383,9 @@ function ExamenTestContent() {
                   </p>
 
                   {/* Images */}
-                  {question.imageUrls && question.imageUrls.length > 0 && (
+                  {question.videoUrls && question.videoUrls.length > 0 && (
                     <div className="mb-6 grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {question.imageUrls.map((url, idx) => (
+                      {question.videoUrls.map((url, idx) => (
                         <div key={idx} className="relative group">
                           <img
                             src={url}
