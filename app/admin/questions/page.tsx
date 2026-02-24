@@ -1086,40 +1086,82 @@ export default function AdminQuestionsPage() {
                   </div>
                 </div>
               ) : (
-                // Theorie & Examen: صوت فقط
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    🎵 رفع ملف صوتي
-                  </label>
-                  <FileUploader
-                    type="audio"
-                    onUploadComplete={(url, publicId) => {
-                      setNewQuestion({
-                        ...newQuestion,
-                        audioUrl: url,
-                      });
-                    }}
-                    maxSizeMB={10}
-                  />
-                  {newQuestion.audioUrl && (
-                    <div className="mt-3">
-                      <p className="text-sm text-green-600 font-medium mb-2">✅ تم رفع الملف الصوتي</p>
-                      <div className="bg-green-50 p-3 rounded-lg">
-                        <audio src={newQuestion.audioUrl} controls className="w-full" />
-                        <button
-                          onClick={() => {
-                            setNewQuestion({
-                              ...newQuestion,
-                              audioUrl: "",
-                            });
-                          }}
-                          className="mt-2 text-red-500 hover:text-red-700 text-sm font-medium"
-                        >
-                          حذف الملف الصوتي
-                        </button>
+                // Theorie & Examen: صور + صوت
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      🖼️ رفع صورة
+                    </label>
+                    <FileUploader
+                      type="image"
+                      onUploadComplete={(url, publicId) => {
+                        setNewQuestion({
+                          ...newQuestion,
+                          videoUrls: [...newQuestion.videoUrls, url],
+                        });
+                      }}
+                      maxSizeMB={5}
+                    />
+                    {newQuestion.videoUrls.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-sm text-green-600 font-medium mb-2">
+                          ✅ تم رفع {newQuestion.videoUrls.length} صورة
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {newQuestion.videoUrls.map((url, idx) => (
+                            <div key={idx} className="relative group">
+                              <img src={url} alt={`صورة ${idx + 1}`} className="w-full h-24 object-cover rounded-lg" />
+                              <button
+                                onClick={() => {
+                                  setNewQuestion({
+                                    ...newQuestion,
+                                    videoUrls: newQuestion.videoUrls.filter((_, i) => i !== idx),
+                                  });
+                                }}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full hover:bg-red-600 font-bold"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      🎵 رفع ملف صوتي
+                    </label>
+                    <FileUploader
+                      type="audio"
+                      onUploadComplete={(url, publicId) => {
+                        setNewQuestion({
+                          ...newQuestion,
+                          audioUrl: url,
+                        });
+                      }}
+                      maxSizeMB={10}
+                    />
+                    {newQuestion.audioUrl && (
+                      <div className="mt-3">
+                        <p className="text-sm text-green-600 font-medium mb-2">✅ تم رفع الملف الصوتي</p>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <audio src={newQuestion.audioUrl} controls className="w-full" />
+                          <button
+                            onClick={() => {
+                              setNewQuestion({
+                                ...newQuestion,
+                                audioUrl: "",
+                              });
+                            }}
+                            className="mt-2 text-red-500 hover:text-red-700 text-sm font-medium"
+                          >
+                            حذف الملف الصوتي
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               <button
